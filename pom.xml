@@ -263,11 +263,11 @@ Use Resourcebundles on a environmental or user specific level.</description>
 					<excludes>
 						<exclude>**/*.json</exclude>
 					</excludes>
-					<basedir>${basedir}</basedir>
-					<header>${main.basedir}/src/etc/header.txt</header>
+					<basedir>${main.basedir}</basedir>
+					<header>file:${main.basedir}/src/etc/header.txt</header>
 					<quiet>false</quiet>
 					<failIfMissing>false</failIfMissing>
-					<aggregate>true</aggregate>
+					<aggregate>false</aggregate>
 					<includes>
 						<include>src/**</include>
 						<include>**/test/**</include>
@@ -279,8 +279,7 @@ Use Resourcebundles on a environmental or user specific level.</description>
 						<project.name>${project.name}</project.name>
 						<license>${project.licenses[0].license.name}</license>
 						<license.url>${project.licenses[0].license.name}</license.url>
-						<developer.name>${project.developers[0].name}
-							[${project.developers[0].url}]</developer.name>
+						<developer.name>${project.developers[0].name}</developer.name>
 					</properties>
 					<encoding>${encoding}</encoding>
 					<headerDefinitions>

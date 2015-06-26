@@ -1,4 +1,3 @@
-
 Copyright (c) ${year}, Marco Brade
 All rights reserved.
 
