@@ -1,6 +1,6 @@
 /*
+ *
  * Copyright (c) 2010, Marco Brade
-							[null]
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -77,6 +77,270 @@ import org.codehaus.jackson.util.DefaultPrettyPrinter;
  * 
  */
 public class PrefixedProperties extends Properties implements Serializable {
+
+    private class DoubleEntry<T, P> {
+	private final T one;
+	private final P two;
+
+	private DoubleEntry(final T one, final P two) {
+	    this.one = one;
+	    this.two = two;
+	}
+
+	public T getOne() {
+	    return one;
+	}
+
+	public P getTwo() {
+	    return two;
+	}
+
+	@Override
+	public String toString() {
+	    final StringBuilder sb = new StringBuilder("One:").append(one).append(" Two: ").append(two);
+	    return sb.toString();
+	}
+
+    }
+
+    /*
+     * The Class EmptyPrefix.
+     */
+    private static class EmptyPrefix extends DefaultPrefixConfig {
+
+	/** The Constant serialVersionUID. */
+	private final static long serialVersionUID = 1L;
+
+	/** The Constant INSTANCE. */
+	private final static EmptyPrefix INSTANCE = new EmptyPrefix();
+
+	/* (non-Javadoc)
+	 * @see net.sf.prefixedproperties.config.AbstractPrefixConfig#getClone()
+	 */
+	@Override
+	public final PrefixConfig clone() {
+	    return EmptyPrefix.INSTANCE;
+	}
+    }
+
+    /*
+     * The Class PPEntry.
+     */
+    private final class PPEntry implements Map.Entry<Object, Object> {
+
+	/* The key. */
+	private final Object key;
+
+	/* The value. */
+	private final Object value;
+
+	/*
+	 * Instantiates a new pP entry.
+	 *
+	 * @param key the key
+	 * @param value the value
+	 */
+	private PPEntry(final Object aKey, final Object aValue) {
+	    key = aKey;
+	    value = aValue;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.util.Map.Entry#getKey()
+	 */
+	@Override
+	public Object getKey() {
+	    try {
+		lock.readLock().lock();
+		return getUnprefixedKey(key);
+	    } finally {
+		lock.readLock().unlock();
+	    }
+	}
+
+	/* (non-Javadoc)
+	 * @see java.util.Map.Entry#getValue()
+	 */
+	@Override
+	public Object getValue() {
+	    return value;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.util.Map.Entry#setValue(java.lang.Object)
+	 */
+	@Override
+	public Object setValue(final Object aValue) {
+	    return put(key, aValue);
+	}
+
+	@Override
+	public String toString() {
+	    final StringBuilder builder = new StringBuilder();
+	    builder.append("[key=").append(key).append(", value=").append(value).append("]");
+	    return builder.toString();
+	}
+
+    }
+
+    /*
+     * The Class PrefixedPropertiesEnumerationImpl.
+     *
+     * @param <E> the element type
+     */
+    private final class PrefixedPropertiesEnumerationImpl<E> implements PrefixedPropertiesEnumeration<E> {
+
+	/** The it. */
+	private Iterator<E> it;
+
+	/** The last. */
+	private E last;
+
+	/** The is key. */
+	private boolean isKey;
+
+	/*
+	 * Instantiates a new prefixed properties enumeration impl.
+	 *
+	 * @param it the it
+	 */
+	private PrefixedPropertiesEnumerationImpl(final Iterator<E> iterator) {
+	    this(iterator, false);
+	}
+
+	/*
+	 * Instantiates a new prefixed properties enumeration impl.
+	 *
+	 * @param it the it
+	 * @param isKey the is key
+	 */
+	private PrefixedPropertiesEnumerationImpl(final Iterator<E> iterator, final boolean isKeyParam) {
+	    it = iterator;
+	    isKey = isKeyParam;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.util.Enumeration#hasMoreElements()
+	 */
+	@Override
+	public boolean hasMoreElements() {
+	    return hasNext();
+	}
+
+	/* (non-Javadoc)
+	 * @see java.util.Iterator#hasNext()
+	 */
+	@Override
+	public boolean hasNext() {
+	    return it.hasNext();
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Iterable#iterator()
+	 */
+	@Override
+	public Iterator<E> iterator() {
+	    return this;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.util.Iterator#next()
+	 */
+	@Override
+	public E next() {
+	    last = it.next();
+	    return last;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.util.Enumeration#nextElement()
+	 */
+	@Override
+	public E nextElement() {
+	    return next();
+	}
+
+	/* (non-Javadoc)
+	 * @see java.util.Iterator#remove()
+	 */
+	@Override
+	public void remove() {
+	    if (isKey) {
+		PrefixedProperties.this.remove(last);
+	    }
+	}
+
+    }
+
+    /**
+     * Creates the cascading prefix properties.
+     * 
+     * @param configs
+     *            the configs
+     * @return the prefixed properties
+     */
+    public static PrefixedProperties createCascadingPrefixProperties(final List<PrefixConfig> configs) {
+	PrefixedProperties properties = null;
+	for (final PrefixConfig config : configs) {
+	    if (properties == null) {
+		properties = new PrefixedProperties((config == null) ? new DynamicPrefixConfig() : config);
+	    } else {
+		properties = new PrefixedProperties(properties, (config == null) ? new DynamicPrefixConfig() : config);
+	    }
+	}
+	return properties;
+    }
+
+    /**
+     * Creates the cascading prefix properties.
+     * 
+     * @param configs
+     *            the configs
+     * @return the prefixed properties
+     */
+    public static PrefixedProperties createCascadingPrefixProperties(final PrefixConfig... configs) {
+	PrefixedProperties properties = null;
+	for (final PrefixConfig config : configs) {
+	    if (properties == null) {
+		properties = new PrefixedProperties((config == null) ? new DynamicPrefixConfig() : config);
+	    } else {
+		properties = new PrefixedProperties(properties, (config == null) ? new DynamicPrefixConfig() : config);
+	    }
+	}
+	return properties;
+    }
+
+    /**
+     * Creates the cascading prefix properties. This method parses the given prefixString and creates for each delimiter part a PrefixedProperties.
+     * 
+     * @param prefixString
+     *            the prefixes
+     * @return the prefixed properties
+     */
+    public static PrefixedProperties createCascadingPrefixProperties(final String prefixString) {
+	return prefixString.indexOf(PrefixConfig.PREFIXDELIMITER) != -1 ? createCascadingPrefixProperties(prefixString.split("\\" + PrefixConfig.PREFIXDELIMITER))
+		: createCascadingPrefixProperties(new String[] { prefixString });
+
+    }
+
+    /**
+     * Creates the cascading prefix properties by using the given Prefixes.
+     * 
+     * @param prefixes
+     *            the prefixes
+     * @return the prefixed properties
+     */
+    public static PrefixedProperties createCascadingPrefixProperties(final String[] prefixes) {
+	PrefixedProperties properties = null;
+	for (final String aPrefix : prefixes) {
+	    if (properties == null) {
+		properties = new PrefixedProperties(aPrefix);
+	    } else {
+		properties = new PrefixedProperties(properties, aPrefix);
+	    }
+	}
+	return properties;
+    }
 
     private static final long serialVersionUID = 1L;
 
@@ -162,74 +426,15 @@ public class PrefixedProperties extends Properties implements Serializable {
 	setDefaultPrefix(defaultPrefix);
     }
 
-    /**
-     * Creates the cascading prefix properties.
-     * 
-     * @param configs
-     *            the configs
-     * @return the prefixed properties
-     */
-    public static PrefixedProperties createCascadingPrefixProperties(final List<PrefixConfig> configs) {
-	PrefixedProperties properties = null;
-	for (final PrefixConfig config : configs) {
-	    if (properties == null) {
-		properties = new PrefixedProperties((config == null) ? new DynamicPrefixConfig() : config);
-	    } else {
-		properties = new PrefixedProperties(properties, (config == null) ? new DynamicPrefixConfig() : config);
-	    }
+    private String checkAndConvertPrefix(final String prefix) {
+	if (prefix == null) {
+	    throw new IllegalArgumentException("The prefix has to be set and is not allowed to be null.");
 	}
-	return properties;
-    }
-
-    /**
-     * Creates the cascading prefix properties.
-     * 
-     * @param configs
-     *            the configs
-     * @return the prefixed properties
-     */
-    public static PrefixedProperties createCascadingPrefixProperties(final PrefixConfig... configs) {
-	PrefixedProperties properties = null;
-	for (final PrefixConfig config : configs) {
-	    if (properties == null) {
-		properties = new PrefixedProperties((config == null) ? new DynamicPrefixConfig() : config);
-	    } else {
-		properties = new PrefixedProperties(properties, (config == null) ? new DynamicPrefixConfig() : config);
-	    }
+	String myPrefix = prefix;
+	if ("*".equals(prefix)) {
+	    myPrefix = StringUtils.repeat(PrefixConfig.PREFIXDELIMITER_STRING, getPrefixConfigs().size());
 	}
-	return properties;
-    }
-
-    /**
-     * Creates the cascading prefix properties. This method parses the given prefixString and creates for each delimiter part a PrefixedProperties.
-     * 
-     * @param prefixString
-     *            the prefixes
-     * @return the prefixed properties
-     */
-    public static PrefixedProperties createCascadingPrefixProperties(final String prefixString) {
-	return prefixString.indexOf(PrefixConfig.PREFIXDELIMITER) != -1 ? createCascadingPrefixProperties(prefixString.split("\\" + PrefixConfig.PREFIXDELIMITER))
-	    : createCascadingPrefixProperties(new String[] { prefixString });
-
-    }
-
-    /**
-     * Creates the cascading prefix properties by using the given Prefixes.
-     * 
-     * @param prefixes
-     *            the prefixes
-     * @return the prefixed properties
-     */
-    public static PrefixedProperties createCascadingPrefixProperties(final String[] prefixes) {
-	PrefixedProperties properties = null;
-	for (final String aPrefix : prefixes) {
-	    if (properties == null) {
-		properties = new PrefixedProperties(aPrefix);
-	    } else {
-		properties = new PrefixedProperties(properties, aPrefix);
-	    }
-	}
-	return properties;
+	return myPrefix;
     }
 
     /* (non-Javadoc)
@@ -291,6 +496,13 @@ public class PrefixedProperties extends Properties implements Serializable {
 	}
     }
 
+    private void configureJsonParser(final JsonParser jp) {
+	jp.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
+	jp.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+	jp.configure(JsonParser.Feature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER, true);
+	jp.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
+    }
+
     /* (non-Javadoc)
      * @see java.util.Hashtable#contains(java.lang.Object)
      */
@@ -333,6 +545,13 @@ public class PrefixedProperties extends Properties implements Serializable {
 	} finally {
 	    lock.readLock().unlock();
 	}
+    }
+
+    private boolean containsValidPrefix(final Object key) {
+	if (key != null && String.class == key.getClass()) {
+	    return prefixes.containsValidPrefix((String) key);
+	}
+	return false;
     }
 
     /* (non-Javadoc)
@@ -426,6 +645,25 @@ public class PrefixedProperties extends Properties implements Serializable {
     public Object get(final Object key) {
 	final boolean useLocalPrefixes = !mixDefaultAndLocalPrefixes && hasLocalPrefixConfigurations();
 	return get(key, useLocalPrefixes);
+    }
+
+    /* (non-Javadoc)
+     * @see java.util.Hashtable#get(java.lang.Object)
+     */
+    protected Object get(final Object key, final boolean useLocalPrefixes) {
+	Object result = null;
+	lock.readLock().lock();
+	try {
+	    final Object prefixedKey = getPrefixedKey(key, useLocalPrefixes);
+	    result = (properties instanceof PrefixedProperties) ? ((PrefixedProperties) properties).get(prefixedKey, useLocalPrefixes) : properties.get(prefixedKey);
+	    //fall back by getting the property without any prefixed keys
+	    if (result == null) {
+		result = (properties instanceof PrefixedProperties) ? ((PrefixedProperties) properties).get(key, useLocalPrefixes) : properties.get(key);
+	    }
+	    return result;
+	} finally {
+	    lock.readLock().unlock();
+	}
     }
 
     /**
@@ -595,6 +833,19 @@ public class PrefixedProperties extends Properties implements Serializable {
 	    return result != null ? result : def;
 	} catch (final NumberFormatException nfe) {
 	    return def;
+	}
+    }
+
+    /**
+     * Gets the complete properties.
+     * 
+     * @return the complete properties
+     */
+    protected Properties getCompleteProperties() {
+	if (properties instanceof PrefixedProperties) {
+	    return ((PrefixedProperties) properties).getCompleteProperties();
+	} else {
+	    return properties;
 	}
     }
 
@@ -832,6 +1083,28 @@ public class PrefixedProperties extends Properties implements Serializable {
 	}
     }
 
+    private Map<Object, Object> getKeyMap(final boolean onlyStrings) {
+	final Map<Object, Object> result = new HashMap<Object, Object>();
+	for (@SuppressWarnings("rawtypes")
+	final Map.Entry entry : properties.entrySet()) {
+	    if (String.class == entry.getKey().getClass()) {
+		if (isKeyValid(entry.getKey())) {
+		    final Object unprefixedKey = getUnprefixedKey(entry.getKey());
+		    if (result.containsKey(unprefixedKey)) {
+			if (!unprefixedKey.equals(entry.getKey())) {
+			    result.put(unprefixedKey, entry.getKey());
+			}
+		    } else {
+			result.put(unprefixedKey, entry.getKey());
+		    }
+		}
+	    } else if (!onlyStrings) {
+		result.put(entry.getKey(), entry.getKey());
+	    }
+	}
+	return result;
+    }
+
     /**
      * Gets the prefixed key and parse it to an long-value.
      * 
@@ -905,6 +1178,31 @@ public class PrefixedProperties extends Properties implements Serializable {
 	}
     }
 
+    private StringBuilder getPrefix(final StringBuilder sb, final boolean useLocalPrefixConfigurations) {
+	if (properties instanceof PrefixedProperties) {
+	    ((PrefixedProperties) properties).getPrefix(sb, useLocalPrefixConfigurations);
+	}
+
+	if (prefixes != null) {
+	    if (!useLocalPrefixConfigurations) {
+		if (prefixes.getPrefix() != null) {
+		    if (sb.length() > 0) {
+			sb.append(PrefixConfig.PREFIXDELIMITER);
+		    }
+		    sb.append(prefixes.getPrefix());
+		}
+	    } else {
+		if (prefixes.getLocalPrefix() != null) {
+		    if (sb.length() > 0) {
+			sb.append(PrefixConfig.PREFIXDELIMITER);
+		    }
+		    sb.append(prefixes.getLocalPrefix());
+		}
+	    }
+	}
+	return sb;
+    }
+
     /**
      * Gets the prefix config.
      * 
@@ -917,6 +1215,38 @@ public class PrefixedProperties extends Properties implements Serializable {
 	} finally {
 	    lock.readLock().unlock();
 	}
+    }
+
+    private Map<Integer, PrefixConfig> getPrefixConfigs() {
+	return getPrefixConfigs(new TreeMap<Integer, PrefixConfig>());
+    }
+
+    private Map<Integer, PrefixConfig> getPrefixConfigs(final Map<Integer, PrefixConfig> result) {
+	if (properties instanceof PrefixedProperties) {
+	    ((PrefixedProperties) properties).getPrefixConfigs(result);
+	}
+	result.put(result.size(), getPrefixConfig());
+	return result;
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> T getPrefixedKey(final T key, final boolean useLocalPrefixConfigurations) {
+	if (String.class == key.getClass()) {
+	    if (containsValidPrefix(key)) {
+		return key;
+	    } else {
+		if (prefixes != null) {
+		    return (T) prefixes.getPrefixedKey((String) key, useLocalPrefixConfigurations);
+		} else {
+		    return key;
+		}
+	    }
+	}
+	return key;
+    }
+
+    private Set<String> getPrefixes() {
+	return prefixes != null ? prefixes.getPrefixes() : Collections.<String> emptySet();
     }
 
     /**
@@ -1039,6 +1369,90 @@ public class PrefixedProperties extends Properties implements Serializable {
 	}
     }
 
+    private List<DoubleEntry<PrefixConfig, String>> getToSetPrefixMap(final List<String> prefixesList, final Map<Integer, PrefixConfig> configs) throws IllegalArgumentException {
+	int i = 0;
+	PrefixConfig config = null;
+	final Map<Integer, PrefixConfig> subConfigs = new HashMap<Integer, PrefixConfig>(configs);
+	final List<DoubleEntry<PrefixConfig, String>> result = new LinkedList<DoubleEntry<PrefixConfig, String>>();
+	for (final Map.Entry<Integer, PrefixConfig> entry : configs.entrySet()) {
+	    if (i == prefixesList.size()) {
+		break;
+	    }
+	    config = entry.getValue();
+	    subConfigs.remove(entry.getKey());
+	    if (config.isDynamic()) {
+		try {
+		    result.addAll(getToSetPrefixMap(prefixesList.subList(i, prefixesList.size()), subConfigs));
+		    i = prefixesList.size();
+		    break;
+		} catch (final IllegalArgumentException iae) {
+		    result.add(new DoubleEntry<PrefixConfig, String>(config, prefixesList.get(i)));
+		    i++;
+		}
+	    } else if (config.containsValidPrefix(prefixesList.get(i))) {
+		result.add(new DoubleEntry<PrefixConfig, String>(config, prefixesList.get(i)));
+		i++;
+	    }
+	}
+	if (i < prefixesList.size()) {
+	    throw new IllegalArgumentException("Prefix does not match the given PrefixConfig.");
+	}
+	return result;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> getTreeMap() {
+	final Map<Integer, PrefixConfig> configs = getPrefixConfigs();
+	final Map<String, Object> treeMap = new TreeMap<String, Object>();
+	final Properties props = getCompleteProperties();
+	String keyName = "";
+	String plainProperty = "";
+	for (final Enumeration<?> completition = props.propertyNames(); completition.hasMoreElements();) {
+	    keyName = (String) completition.nextElement();
+	    plainProperty = keyName;
+	    Map<String, Object> propertyMap = treeMap;
+	    for (int i = 0; i < configs.size(); i++) {
+		final PrefixConfig config = configs.get(i);
+		boolean found = false;
+		for (final Iterator<String> prefixIterator = config.getPrefixes().iterator(); prefixIterator.hasNext() && !found;) {
+		    final String prefix = prefixIterator.next();
+		    if (plainProperty.startsWith(prefix + PrefixConfig.PREFIXDELIMITER)) {
+			Object subMap = propertyMap.get(prefix);
+			if (subMap == null) {
+			    subMap = new TreeMap<String, Object>();
+			    propertyMap.put(prefix, subMap);
+			}
+			plainProperty = plainProperty.replaceFirst(prefix + PrefixConfig.PREFIXDELIMITER, "");
+			found = true;
+			if (subMap instanceof Map<?, ?>) {
+			    propertyMap = (Map<String, Object>) subMap;
+			} else {
+			    throw new IllegalStateException("Failed to render JSON-File.");
+			}
+		    }
+		}
+	    }
+	    propertyMap.put((char) 1 + plainProperty, props.getProperty(keyName));
+	}
+	return treeMap;
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> T getUnprefixedKey(final T key) {
+	if (key == null) {
+	    throw new IllegalArgumentException("A null key is not allowed.");
+	}
+	if (String.class == key.getClass()) {
+	    String newKey = (String) key;
+	    if (properties instanceof PrefixedProperties) {
+		newKey = (String) ((PrefixedProperties) properties).getUnprefixedKey(key);
+	    }
+	    newKey = prefixes.getUnprefixedKey(newKey);
+	    return (T) newKey;
+	}
+	return key;
+    }
+
     /* (non-Javadoc)
      * @see java.util.Hashtable#hashCode()
      */
@@ -1071,6 +1485,16 @@ public class PrefixedProperties extends Properties implements Serializable {
 	} finally {
 	    lock.readLock().unlock();
 	}
+    }
+
+    private boolean isKeyValid(final Object key) {
+	if (key == null) {
+	    throw new IllegalArgumentException("A null key is not allowed.");
+	}
+	if (String.class == key.getClass()) {
+	    return !containsValidPrefix(key) || startsWithCurrentPrefix(key);
+	}
+	return true;
     }
 
     /* (non-Javadoc)
@@ -1253,6 +1677,13 @@ public class PrefixedProperties extends Properties implements Serializable {
 	}
     }
 
+    private void readObject(final ObjectInputStream ois) throws ClassNotFoundException, IOException {
+	prefixes = (PrefixConfig) ois.readObject();
+	properties = (Properties) ois.readObject();
+	mixDefaultAndLocalPrefixes = ois.readBoolean();
+	lock = new ReentrantReadWriteLock();
+    }
+
     /* (non-Javadoc)
      * @see java.util.Hashtable#remove(java.lang.Object)
      */
@@ -1349,6 +1780,26 @@ public class PrefixedProperties extends Properties implements Serializable {
 	}
     }
 
+    private void setDefaultPrefixes(final List<String> prefixesList) {
+	final Map<Integer, PrefixConfig> configs = getPrefixConfigs();
+	try {
+	    final List<DoubleEntry<PrefixConfig, String>> prefixesToSet = getToSetPrefixMap(prefixesList, configs);
+	    final List<PrefixConfig> prefixesToSetList = new ArrayList<PrefixConfig>();
+	    for (final DoubleEntry<PrefixConfig, String> entry : prefixesToSet) {
+		entry.getOne().setDefaultPrefix(entry.getTwo());
+		prefixesToSetList.add(entry.getOne());
+	    }
+	    final Collection<PrefixConfig> allConfigs = getPrefixConfigs().values();
+	    for (final PrefixConfig config : allConfigs) {
+		if (!prefixesToSetList.contains(config)) {
+		    config.setDefaultPrefix(null);//this will remove the defaultPrefix.
+		}
+	    }
+	} catch (final IllegalArgumentException iae) {
+	    throw new IllegalArgumentException("The given prefixes are not part of the PrefixConfig: " + prefixesList);
+	}
+    }
+
     /**
      * Sets the local Prefix. The local Prefix is Thread depended and will only affect the current thread. You can have a combination of default and local prefix.
      * 
@@ -1397,6 +1848,26 @@ public class PrefixedProperties extends Properties implements Serializable {
 	}
     }
 
+    private void setPrefixes(final List<String> prefixesList) {
+	final Map<Integer, PrefixConfig> configs = getPrefixConfigs();
+	try {
+	    final List<DoubleEntry<PrefixConfig, String>> prefixesToSet = getToSetPrefixMap(prefixesList, configs);
+	    final List<PrefixConfig> prefixesToSetList = new ArrayList<PrefixConfig>();
+	    for (final DoubleEntry<PrefixConfig, String> entry : prefixesToSet) {
+		entry.getOne().setPrefix(entry.getTwo());
+		prefixesToSetList.add(entry.getOne());
+	    }
+	    final Collection<PrefixConfig> allConfigs = getPrefixConfigs().values();
+	    for (final PrefixConfig config : allConfigs) {
+		if (!prefixesToSetList.contains(config)) {
+		    config.setPrefix(null);//this will remove the configuredPrefix.
+		}
+	    }
+	} catch (final IllegalArgumentException iae) {
+	    throw new IllegalArgumentException("The given prefixes are not part of the PrefixConfig: " + prefixesList);
+	}
+    }
+
     /* (non-Javadoc)
      * @see java.util.Properties#setProperty(java.lang.String, java.lang.String)
      */
@@ -1421,6 +1892,24 @@ public class PrefixedProperties extends Properties implements Serializable {
 	} finally {
 	    lock.readLock().unlock();
 	}
+    }
+
+    private List<String> split(final String myPrefix) {
+	List<String> prefixList;
+	if (myPrefix.indexOf(PrefixConfig.PREFIXDELIMITER) != -1) {
+	    prefixList = new ArrayList<String>(Arrays.asList(myPrefix.split("\\" + PrefixConfig.PREFIXDELIMITER)));
+	} else {
+	    prefixList = new ArrayList<String>(1);
+	    prefixList.add(myPrefix);
+	}
+	return prefixList;
+    }
+
+    private boolean startsWithCurrentPrefix(final Object key) {
+	if (key != null && String.class == key.getClass()) {
+	    return prefixes.startsWithCurrentPrefix((String) key);
+	}
+	return false;
     }
 
     /* (non-Javadoc)
@@ -1590,6 +2079,18 @@ public class PrefixedProperties extends Properties implements Serializable {
 	}
     }
 
+    private void traverseJSON(final JsonParser jp, final String prefix) throws IOException {
+	while (jp.nextToken() != JsonToken.END_OBJECT) {
+	    final String fieldname = jp.getCurrentName();
+	    if (jp.nextToken() == JsonToken.START_OBJECT) {
+		traverseJSON(jp, prefix != null ? prefix + PrefixConfig.PREFIXDELIMITER + fieldname : fieldname);
+	    } else {
+		final String text = jp.getText();
+		put(prefix != null ? prefix + PrefixConfig.PREFIXDELIMITER + fieldname : fieldname, text);
+	    }
+	}
+    }
+
     /* (non-Javadoc)
      * @see java.util.Hashtable#values()
      */
@@ -1605,281 +2106,6 @@ public class PrefixedProperties extends Properties implements Serializable {
 	    return result;
 	} finally {
 	    lock.readLock().unlock();
-	}
-    }
-
-    private String checkAndConvertPrefix(final String prefix) {
-	if (prefix == null) {
-	    throw new IllegalArgumentException("The prefix has to be set and is not allowed to be null.");
-	}
-	String myPrefix = prefix;
-	if ("*".equals(prefix)) {
-	    myPrefix = StringUtils.repeat(PrefixConfig.PREFIXDELIMITER_STRING, getPrefixConfigs().size());
-	}
-	return myPrefix;
-    }
-
-    private void configureJsonParser(final JsonParser jp) {
-	jp.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
-	jp.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
-	jp.configure(JsonParser.Feature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER, true);
-	jp.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
-    }
-
-    private boolean containsValidPrefix(final Object key) {
-	if (key != null && String.class == key.getClass()) {
-	    return prefixes.containsValidPrefix((String) key);
-	}
-	return false;
-    }
-
-    private Map<Object, Object> getKeyMap(final boolean onlyStrings) {
-	final Map<Object, Object> result = new HashMap<Object, Object>();
-	for (@SuppressWarnings("rawtypes")
-	final Map.Entry entry : properties.entrySet()) {
-	    if (String.class == entry.getKey().getClass()) {
-		if (isKeyValid(entry.getKey())) {
-		    final Object unprefixedKey = getUnprefixedKey(entry.getKey());
-		    if (result.containsKey(unprefixedKey)) {
-			if (!unprefixedKey.equals(entry.getKey())) {
-			    result.put(unprefixedKey, entry.getKey());
-			}
-		    } else {
-			result.put(unprefixedKey, entry.getKey());
-		    }
-		}
-	    } else if (!onlyStrings) {
-		result.put(entry.getKey(), entry.getKey());
-	    }
-	}
-	return result;
-    }
-
-    private StringBuilder getPrefix(final StringBuilder sb, final boolean useLocalPrefixConfigurations) {
-	if (properties instanceof PrefixedProperties) {
-	    ((PrefixedProperties) properties).getPrefix(sb, useLocalPrefixConfigurations);
-	}
-
-	if (prefixes != null) {
-	    if (!useLocalPrefixConfigurations) {
-		if (prefixes.getPrefix() != null) {
-		    if (sb.length() > 0) {
-			sb.append(PrefixConfig.PREFIXDELIMITER);
-		    }
-		    sb.append(prefixes.getPrefix());
-		}
-	    } else {
-		if (prefixes.getLocalPrefix() != null) {
-		    if (sb.length() > 0) {
-			sb.append(PrefixConfig.PREFIXDELIMITER);
-		    }
-		    sb.append(prefixes.getLocalPrefix());
-		}
-	    }
-	}
-	return sb;
-    }
-
-    private Map<Integer, PrefixConfig> getPrefixConfigs() {
-	return getPrefixConfigs(new TreeMap<Integer, PrefixConfig>());
-    }
-
-    private Map<Integer, PrefixConfig> getPrefixConfigs(final Map<Integer, PrefixConfig> result) {
-	if (properties instanceof PrefixedProperties) {
-	    ((PrefixedProperties) properties).getPrefixConfigs(result);
-	}
-	result.put(result.size(), getPrefixConfig());
-	return result;
-    }
-
-    @SuppressWarnings("unchecked")
-    private <T> T getPrefixedKey(final T key, final boolean useLocalPrefixConfigurations) {
-	if (String.class == key.getClass()) {
-	    if (containsValidPrefix(key)) {
-		return key;
-	    } else {
-		if (prefixes != null) {
-		    return (T) prefixes.getPrefixedKey((String) key, useLocalPrefixConfigurations);
-		} else {
-		    return key;
-		}
-	    }
-	}
-	return key;
-    }
-
-    private Set<String> getPrefixes() {
-	return prefixes != null ? prefixes.getPrefixes() : Collections.<String> emptySet();
-    }
-
-    private List<DoubleEntry<PrefixConfig, String>> getToSetPrefixMap(final List<String> prefixesList, final Map<Integer, PrefixConfig> configs) throws IllegalArgumentException {
-	int i = 0;
-	PrefixConfig config = null;
-	final Map<Integer, PrefixConfig> subConfigs = new HashMap<Integer, PrefixConfig>(configs);
-	final List<DoubleEntry<PrefixConfig, String>> result = new LinkedList<DoubleEntry<PrefixConfig, String>>();
-	for (final Map.Entry<Integer, PrefixConfig> entry : configs.entrySet()) {
-	    if (i == prefixesList.size()) {
-		break;
-	    }
-	    config = entry.getValue();
-	    subConfigs.remove(entry.getKey());
-	    if (config.isDynamic()) {
-		try {
-		    result.addAll(getToSetPrefixMap(prefixesList.subList(i, prefixesList.size()), subConfigs));
-		    i = prefixesList.size();
-		    break;
-		} catch (final IllegalArgumentException iae) {
-		    result.add(new DoubleEntry<PrefixConfig, String>(config, prefixesList.get(i)));
-		    i++;
-		}
-	    } else if (config.containsValidPrefix(prefixesList.get(i))) {
-		result.add(new DoubleEntry<PrefixConfig, String>(config, prefixesList.get(i)));
-		i++;
-	    }
-	}
-	if (i < prefixesList.size()) {
-	    throw new IllegalArgumentException("Prefix does not match the given PrefixConfig.");
-	}
-	return result;
-    }
-
-    @SuppressWarnings("unchecked")
-    private Map<String, Object> getTreeMap() {
-	final Map<Integer, PrefixConfig> configs = getPrefixConfigs();
-	final Map<String, Object> treeMap = new TreeMap<String, Object>();
-	final Properties props = getCompleteProperties();
-	String keyName = "";
-	String plainProperty = "";
-	for (final Enumeration<?> completition = props.propertyNames(); completition.hasMoreElements();) {
-	    keyName = (String) completition.nextElement();
-	    plainProperty = keyName;
-	    Map<String, Object> propertyMap = treeMap;
-	    for (int i = 0; i < configs.size(); i++) {
-		final PrefixConfig config = configs.get(i);
-		boolean found = false;
-		for (final Iterator<String> prefixIterator = config.getPrefixes().iterator(); prefixIterator.hasNext() && !found;) {
-		    final String prefix = prefixIterator.next();
-		    if (plainProperty.startsWith(prefix + PrefixConfig.PREFIXDELIMITER)) {
-			Object subMap = propertyMap.get(prefix);
-			if (subMap == null) {
-			    subMap = new TreeMap<String, Object>();
-			    propertyMap.put(prefix, subMap);
-			}
-			plainProperty = plainProperty.replaceFirst(prefix + PrefixConfig.PREFIXDELIMITER, "");
-			found = true;
-			if (subMap instanceof Map<?, ?>) {
-			    propertyMap = (Map<String, Object>) subMap;
-			} else {
-			    throw new IllegalStateException("Failed to render JSON-File.");
-			}
-		    }
-		}
-	    }
-	    propertyMap.put((char) 1 + plainProperty, props.getProperty(keyName));
-	}
-	return treeMap;
-    }
-
-    @SuppressWarnings("unchecked")
-    private <T> T getUnprefixedKey(final T key) {
-	if (key == null) {
-	    throw new IllegalArgumentException("A null key is not allowed.");
-	}
-	if (String.class == key.getClass()) {
-	    String newKey = (String) key;
-	    if (properties instanceof PrefixedProperties) {
-		newKey = (String) ((PrefixedProperties) properties).getUnprefixedKey(key);
-	    }
-	    newKey = prefixes.getUnprefixedKey(newKey);
-	    return (T) newKey;
-	}
-	return key;
-    }
-
-    private boolean isKeyValid(final Object key) {
-	if (key == null) {
-	    throw new IllegalArgumentException("A null key is not allowed.");
-	}
-	if (String.class == key.getClass()) {
-	    return !containsValidPrefix(key) || startsWithCurrentPrefix(key);
-	}
-	return true;
-    }
-
-    private void readObject(final ObjectInputStream ois) throws ClassNotFoundException, IOException {
-	prefixes = (PrefixConfig) ois.readObject();
-	properties = (Properties) ois.readObject();
-	mixDefaultAndLocalPrefixes = ois.readBoolean();
-	lock = new ReentrantReadWriteLock();
-    }
-
-    private void setDefaultPrefixes(final List<String> prefixesList) {
-	final Map<Integer, PrefixConfig> configs = getPrefixConfigs();
-	try {
-	    final List<DoubleEntry<PrefixConfig, String>> prefixesToSet = getToSetPrefixMap(prefixesList, configs);
-	    final List<PrefixConfig> prefixesToSetList = new ArrayList<PrefixConfig>();
-	    for (final DoubleEntry<PrefixConfig, String> entry : prefixesToSet) {
-		entry.getOne().setDefaultPrefix(entry.getTwo());
-		prefixesToSetList.add(entry.getOne());
-	    }
-	    final Collection<PrefixConfig> allConfigs = getPrefixConfigs().values();
-	    for (final PrefixConfig config : allConfigs) {
-		if (!prefixesToSetList.contains(config)) {
-		    config.setDefaultPrefix(null);//this will remove the defaultPrefix.
-		}
-	    }
-	} catch (final IllegalArgumentException iae) {
-	    throw new IllegalArgumentException("The given prefixes are not part of the PrefixConfig: " + prefixesList);
-	}
-    }
-
-    private void setPrefixes(final List<String> prefixesList) {
-	final Map<Integer, PrefixConfig> configs = getPrefixConfigs();
-	try {
-	    final List<DoubleEntry<PrefixConfig, String>> prefixesToSet = getToSetPrefixMap(prefixesList, configs);
-	    final List<PrefixConfig> prefixesToSetList = new ArrayList<PrefixConfig>();
-	    for (final DoubleEntry<PrefixConfig, String> entry : prefixesToSet) {
-		entry.getOne().setPrefix(entry.getTwo());
-		prefixesToSetList.add(entry.getOne());
-	    }
-	    final Collection<PrefixConfig> allConfigs = getPrefixConfigs().values();
-	    for (final PrefixConfig config : allConfigs) {
-		if (!prefixesToSetList.contains(config)) {
-		    config.setPrefix(null);//this will remove the configuredPrefix.
-		}
-	    }
-	} catch (final IllegalArgumentException iae) {
-	    throw new IllegalArgumentException("The given prefixes are not part of the PrefixConfig: " + prefixesList);
-	}
-    }
-
-    private List<String> split(final String myPrefix) {
-	List<String> prefixList;
-	if (myPrefix.indexOf(PrefixConfig.PREFIXDELIMITER) != -1) {
-	    prefixList = new ArrayList<String>(Arrays.asList(myPrefix.split("\\" + PrefixConfig.PREFIXDELIMITER)));
-	} else {
-	    prefixList = new ArrayList<String>(1);
-	    prefixList.add(myPrefix);
-	}
-	return prefixList;
-    }
-
-    private boolean startsWithCurrentPrefix(final Object key) {
-	if (key != null && String.class == key.getClass()) {
-	    return prefixes.startsWithCurrentPrefix((String) key);
-	}
-	return false;
-    }
-
-    private void traverseJSON(final JsonParser jp, final String prefix) throws IOException {
-	while (jp.nextToken() != JsonToken.END_OBJECT) {
-	    final String fieldname = jp.getCurrentName();
-	    if (jp.nextToken() == JsonToken.START_OBJECT) {
-		traverseJSON(jp, prefix != null ? prefix + PrefixConfig.PREFIXDELIMITER + fieldname : fieldname);
-	    } else {
-		final String text = jp.getText();
-		put(prefix != null ? prefix + PrefixConfig.PREFIXDELIMITER + fieldname : fieldname, text);
-	    }
 	}
     }
 
@@ -1902,232 +2128,6 @@ public class PrefixedProperties extends Properties implements Serializable {
 	oos.writeObject(prefixes);
 	oos.writeObject(properties);
 	oos.writeBoolean(mixDefaultAndLocalPrefixes);
-    }
-
-    /* (non-Javadoc)
-     * @see java.util.Hashtable#get(java.lang.Object)
-     */
-    protected Object get(final Object key, final boolean useLocalPrefixes) {
-	Object result = null;
-	lock.readLock().lock();
-	try {
-	    final Object prefixedKey = getPrefixedKey(key, useLocalPrefixes);
-	    result = (properties instanceof PrefixedProperties) ? ((PrefixedProperties) properties).get(prefixedKey, useLocalPrefixes) : properties.get(prefixedKey);
-	    //fall back by getting the property without any prefixed keys
-	    if (result == null) {
-		result = (properties instanceof PrefixedProperties) ? ((PrefixedProperties) properties).get(key, useLocalPrefixes) : properties.get(key);
-	    }
-	    return result;
-	} finally {
-	    lock.readLock().unlock();
-	}
-    }
-
-    /**
-     * Gets the complete properties.
-     * 
-     * @return the complete properties
-     */
-    protected Properties getCompleteProperties() {
-	if (properties instanceof PrefixedProperties) {
-	    return ((PrefixedProperties) properties).getCompleteProperties();
-	} else {
-	    return properties;
-	}
-    }
-
-    private class DoubleEntry<T, P> {
-	private final T one;
-	private final P two;
-
-	private DoubleEntry(final T one, final P two) {
-	    this.one = one;
-	    this.two = two;
-	}
-
-	public T getOne() {
-	    return one;
-	}
-
-	public P getTwo() {
-	    return two;
-	}
-
-	@Override
-	public String toString() {
-	    final StringBuilder sb = new StringBuilder("One:").append(one).append(" Two: ").append(two);
-	    return sb.toString();
-	}
-
-    }
-
-    /*
-     * The Class EmptyPrefix.
-     */
-    private static class EmptyPrefix extends DefaultPrefixConfig {
-
-	/** The Constant serialVersionUID. */
-	private final static long serialVersionUID = 1L;
-
-	/** The Constant INSTANCE. */
-	private final static EmptyPrefix INSTANCE = new EmptyPrefix();
-
-	/* (non-Javadoc)
-	 * @see net.sf.prefixedproperties.config.AbstractPrefixConfig#getClone()
-	 */
-	@Override
-	public final PrefixConfig clone() {
-	    return EmptyPrefix.INSTANCE;
-	}
-    }
-
-    /*
-     * The Class PPEntry.
-     */
-    private final class PPEntry implements Map.Entry<Object, Object> {
-
-	/* The key. */
-	private final Object key;
-
-	/* The value. */
-	private final Object value;
-
-	/*
-	 * Instantiates a new pP entry.
-	 *
-	 * @param key the key
-	 * @param value the value
-	 */
-	private PPEntry(final Object aKey, final Object aValue) {
-	    key = aKey;
-	    value = aValue;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.util.Map.Entry#getKey()
-	 */
-	@Override
-	public Object getKey() {
-	    try {
-		lock.readLock().lock();
-		return getUnprefixedKey(key);
-	    } finally {
-		lock.readLock().unlock();
-	    }
-	}
-
-	/* (non-Javadoc)
-	 * @see java.util.Map.Entry#getValue()
-	 */
-	@Override
-	public Object getValue() {
-	    return value;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.util.Map.Entry#setValue(java.lang.Object)
-	 */
-	@Override
-	public Object setValue(final Object aValue) {
-	    return put(key, aValue);
-	}
-
-	@Override
-	public String toString() {
-	    final StringBuilder builder = new StringBuilder();
-	    builder.append("[key=").append(key).append(", value=").append(value).append("]");
-	    return builder.toString();
-	}
-
-    }
-
-    /*
-     * The Class PrefixedPropertiesEnumerationImpl.
-     *
-     * @param <E> the element type
-     */
-    private final class PrefixedPropertiesEnumerationImpl<E> implements PrefixedPropertiesEnumeration<E> {
-
-	/** The it. */
-	private Iterator<E> it;
-
-	/** The last. */
-	private E last;
-
-	/** The is key. */
-	private boolean isKey;
-
-	/*
-	 * Instantiates a new prefixed properties enumeration impl.
-	 *
-	 * @param it the it
-	 */
-	private PrefixedPropertiesEnumerationImpl(final Iterator<E> iterator) {
-	    this(iterator, false);
-	}
-
-	/*
-	 * Instantiates a new prefixed properties enumeration impl.
-	 *
-	 * @param it the it
-	 * @param isKey the is key
-	 */
-	private PrefixedPropertiesEnumerationImpl(final Iterator<E> iterator, final boolean isKeyParam) {
-	    it = iterator;
-	    isKey = isKeyParam;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.util.Enumeration#hasMoreElements()
-	 */
-	@Override
-	public boolean hasMoreElements() {
-	    return hasNext();
-	}
-
-	/* (non-Javadoc)
-	 * @see java.util.Iterator#hasNext()
-	 */
-	@Override
-	public boolean hasNext() {
-	    return it.hasNext();
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Iterable#iterator()
-	 */
-	@Override
-	public Iterator<E> iterator() {
-	    return this;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.util.Iterator#next()
-	 */
-	@Override
-	public E next() {
-	    last = it.next();
-	    return last;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.util.Enumeration#nextElement()
-	 */
-	@Override
-	public E nextElement() {
-	    return next();
-	}
-
-	/* (non-Javadoc)
-	 * @see java.util.Iterator#remove()
-	 */
-	@Override
-	public void remove() {
-	    if (isKey) {
-		PrefixedProperties.this.remove(last);
-	    }
-	}
-
     }
 
 }

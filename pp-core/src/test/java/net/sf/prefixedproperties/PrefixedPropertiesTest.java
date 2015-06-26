@@ -1,6 +1,6 @@
 /*
+ *
  * Copyright (c) 2010, Marco Brade
-							[null]
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,6 +24,7 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package net.sf.prefixedproperties;
 
 import java.io.ByteArrayInputStream;
@@ -62,6 +63,10 @@ public final class PrefixedPropertiesTest {
 
     /** The properties. */
     private final PrefixedProperties properties = new PrefixedProperties(config);
+
+    private String getPrefixKey(final String key) {
+	return properties.getPrefixConfig().getPrefixedKey(key, false);
+    }
 
     /**
      * Setup.
@@ -178,8 +183,8 @@ public final class PrefixedPropertiesTest {
     @Test
     public void testCascadingPrefixProperties() throws IOException {
 	final PrefixedProperties serviceProperties = PrefixedProperties.createCascadingPrefixProperties(new StagingPrefixConfig(StagingPrefixConfig.TEST),
-	                                                                                                new ServicePrefixConfig(
-	                                                                                                                        ServicePrefixConfig.PRODUCT_SRV));
+		new ServicePrefixConfig(
+			ServicePrefixConfig.PRODUCT_SRV));
 
 	final InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("prefixed.properties");
 	try {
@@ -417,22 +422,6 @@ public final class PrefixedPropertiesTest {
 	Assert.assertEquals(30000.7f, properties.getFloat("Float2", 30000.7f));
     }
 
-    /**
-     * Test float array.
-     */
-    @Test
-    public void testFloatArray() {
-	properties.setProperty(getPrefixKey("Array"), "1.0,2.0,3.0");
-	float[] result = properties.getFloatArray("Array", new float[] { 1.0f, 2.0f, 3.0f });
-	Assert.assertEquals(1.0f, result[0]);
-	Assert.assertEquals(2.0f, result[1]);
-	Assert.assertEquals(3.0f, result[2]);
-	result = properties.getFloatArray("Array2", new float[] { 4.0f, 5.0f, 6.0f });
-	Assert.assertEquals(4.0f, result[0]);
-	Assert.assertEquals(5.0f, result[1]);
-	Assert.assertEquals(6.0f, result[2]);
-    }
-
     //
     //    @Test
     //    public void testForEver() throws InterruptedException {
@@ -455,6 +444,22 @@ public final class PrefixedPropertiesTest {
     //	t.start();
     //	Thread.currentThread().sleep(50000);
     //    }
+
+    /**
+     * Test float array.
+     */
+    @Test
+    public void testFloatArray() {
+	properties.setProperty(getPrefixKey("Array"), "1.0,2.0,3.0");
+	float[] result = properties.getFloatArray("Array", new float[] { 1.0f, 2.0f, 3.0f });
+	Assert.assertEquals(1.0f, result[0]);
+	Assert.assertEquals(2.0f, result[1]);
+	Assert.assertEquals(3.0f, result[2]);
+	result = properties.getFloatArray("Array2", new float[] { 4.0f, 5.0f, 6.0f });
+	Assert.assertEquals(4.0f, result[0]);
+	Assert.assertEquals(5.0f, result[1]);
+	Assert.assertEquals(6.0f, result[2]);
+    }
 
     /**
      * Test get property.
@@ -524,9 +529,9 @@ public final class PrefixedPropertiesTest {
     @Test
     public void testJSON() throws IOException {
 	final PrefixedProperties serviceProperties = PrefixedProperties.createCascadingPrefixProperties(new StagingPrefixConfig(StagingPrefixConfig.TEST),
-	                                                                                                new ServicePrefixConfig(
-	                                                                                                                        ServicePrefixConfig.PRODUCT_SRV),
-	                                                                                                                        new ComponentPrefixConfig(ComponentPrefixConfig.CACHE));
+		new ServicePrefixConfig(
+			ServicePrefixConfig.PRODUCT_SRV),
+		new ComponentPrefixConfig(ComponentPrefixConfig.CACHE));
 	final InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("prefixed.json");
 	try {
 	    serviceProperties.loadFromJSON(is);
@@ -599,20 +604,20 @@ public final class PrefixedPropertiesTest {
 		    try {
 			for (int u = 0; u < 10; u++) {
 			    switch (x) {
-				case 0: {
-				    props.setLocalPrefix("stg");
-				    Assert.assertEquals("STAGEVALUE", props.get("key"));
-				    break;
-				}
-				case 1: {
-				    props.setLocalPrefix("liv");
-				    Assert.assertEquals("FALLBACK", props.get("key"));
-				    break;
-				}
-				case 2: {
-				    Assert.assertEquals("TESTVALUE", props.get("key"));
-				    break;
-				}
+			    case 0: {
+				props.setLocalPrefix("stg");
+				Assert.assertEquals("STAGEVALUE", props.get("key"));
+				break;
+			    }
+			    case 1: {
+				props.setLocalPrefix("liv");
+				Assert.assertEquals("FALLBACK", props.get("key"));
+				break;
+			    }
+			    case 2: {
+				Assert.assertEquals("TESTVALUE", props.get("key"));
+				break;
+			    }
 			    }
 			    successCount.incrementAndGet();
 			}
@@ -640,9 +645,9 @@ public final class PrefixedPropertiesTest {
     @Test
     public void testLocalProperties() throws IOException, InterruptedException, BrokenBarrierException {
 	final PrefixedProperties serviceProperties = PrefixedProperties.createCascadingPrefixProperties(new StagingPrefixConfig(StagingPrefixConfig.TEST),
-	                                                                                                new ServicePrefixConfig(
-	                                                                                                                        ServicePrefixConfig.PRODUCT_SRV),
-	                                                                                                                        new ComponentPrefixConfig(ComponentPrefixConfig.CACHE));
+		new ServicePrefixConfig(
+			ServicePrefixConfig.PRODUCT_SRV),
+		new ComponentPrefixConfig(ComponentPrefixConfig.CACHE));
 	final InputStream is = ClassLoader.getSystemResourceAsStream("prefixed.json");
 	serviceProperties.loadFromJSON(is);
 	serviceProperties.setDefaultPrefix("stg");
@@ -811,9 +816,9 @@ public final class PrefixedPropertiesTest {
     @Test
     public void testSetPrefix() throws IOException {
 	final PrefixedProperties serviceProperties = PrefixedProperties.createCascadingPrefixProperties(
-	                                                                                                new StagingPrefixConfig(StagingPrefixConfig.TEST),
-	                                                                                                new ServicePrefixConfig(
-	                                                                                                                        ServicePrefixConfig.PRODUCT_SRV), new ComponentPrefixConfig("cache"));
+		new StagingPrefixConfig(StagingPrefixConfig.TEST),
+		new ServicePrefixConfig(
+			ServicePrefixConfig.PRODUCT_SRV), new ComponentPrefixConfig("cache"));
 	Assert.assertEquals("test.prdsrv.cache", serviceProperties.getEffectivePrefix());
 	serviceProperties.setLocalPrefix(ServicePrefixConfig.ACCOUNTING_SRV + "." + ComponentPrefixConfig.TRANSACTION_MANAGER);
 	Assert.assertEquals("test.accsrv.transaction", serviceProperties.getEffectivePrefix());
@@ -881,9 +886,5 @@ public final class PrefixedPropertiesTest {
 	} catch (final Exception e) {
 	    Assert.assertEquals("test", props.getEffectivePrefix());
 	}
-    }
-
-    private String getPrefixKey(final String key) {
-	return properties.getPrefixConfig().getPrefixedKey(key, false);
     }
 }

@@ -56,5 +56,5 @@ Use Resourcebundles on a environmental or user specific level.</description>
 				<targetPath>META-INF</targetPath>
 			</resource>
 		</resources>
-		</build>
+	</build>
 </project>

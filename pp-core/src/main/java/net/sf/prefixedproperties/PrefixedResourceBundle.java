@@ -1,6 +1,6 @@
 /*
+ *
  * Copyright (c) 2010, Marco Brade
-							[null]
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -47,123 +47,6 @@ import net.sf.prefixedproperties.config.PrefixConfig;
  * The PrefixedResourceBundle extends the {@link ResourceBundle} class to
  */
 public class PrefixedResourceBundle extends ResourceBundle {
-
-    private final PrefixedProperties properties;
-
-    /**
-     * Instantiates a new prefixed resource bundle.
-     * 
-     * @param properties
-     *            the properties
-     */
-    public PrefixedResourceBundle(final PrefixedProperties properties) {
-	this.properties = properties;
-    }
-
-    public static PrefixedResourceBundle getPrefixedResourceBundle(final String baseFileName, final Locale locale) throws IOException {
-	ResourceBundle bundle = ResourceBundle.getBundle(baseFileName, locale, new PrefixedControl());
-	while (bundle != null && !(bundle instanceof PrefixedResourceBundle)) { //a prior call to getBundle might be called without the proper Control class. We need to clear the cache.
-	    ResourceBundle.clearCache();
-	    bundle = ResourceBundle.getBundle(baseFileName, locale, new PrefixedControl());
-	}
-	return (PrefixedResourceBundle) bundle;
-    }
-
-    /**
-     * Gets the prefixed resource bundle.
-     * 
-     * @param baseFileName
-     *            the base file name
-     * @param locale
-     *            the locale
-     * @param prefixConfig
-     *            the prefix config
-     * @return the prefixed resource bundle
-     * @throws IOException
-     *             Signals that an I/O exception has occurred.
-     */
-    public static PrefixedResourceBundle getPrefixedResourceBundle(final String baseFileName, final Locale locale, final PrefixConfig prefixConfig) throws IOException {
-	ResourceBundle bundle = ResourceBundle.getBundle(baseFileName, locale, new PrefixedControl(prefixConfig));
-	while (bundle != null && !(bundle instanceof PrefixedResourceBundle)) {//a prior call to getBundle might be called without the proper Control class. We need to clear the cache.
-	    ResourceBundle.clearCache();
-	    bundle = ResourceBundle.getBundle(baseFileName, locale, new PrefixedControl(prefixConfig));
-	}
-	return (PrefixedResourceBundle) bundle;
-    }
-
-    /**
-     * Gets the prefixed resource bundle.
-     * 
-     * @param baseFileName
-     *            the base file name
-     * @param locale
-     *            the locale
-     * @param defaultPrefix
-     *            the default prefix
-     * @return the prefixed resource bundle
-     * @throws IOException
-     *             Signals that an I/O exception has occurred.
-     */
-    public static PrefixedResourceBundle getPrefixedResourceBundle(final String baseFileName, final Locale locale, final String defaultPrefix) throws IOException {
-	ResourceBundle bundle = ResourceBundle.getBundle(baseFileName, locale, new PrefixedControl(defaultPrefix));
-	while (bundle != null && !(bundle instanceof PrefixedResourceBundle)) { //a prior call to getBundle might be called without the proper Control class. We need to clear the cache.
-	    ResourceBundle.clearCache();
-	    bundle = ResourceBundle.getBundle(baseFileName, locale, new PrefixedControl(defaultPrefix));
-	}
-	return (PrefixedResourceBundle) bundle;
-    }
-
-    /**
-     * Gets the configured prefix.
-     * 
-     * @return the configured prefix
-     */
-    public String getConfiguredPrefix() {
-	return properties.getEffectivePrefix();
-    }
-
-    /* (non-Javadoc)
-     * @see java.util.ResourceBundle#getKeys()
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public Enumeration<String> getKeys() {
-	return new ResouceBundleEnumeration(properties.stringPropertyNames().iterator());
-    }
-
-    /**
-     * Gets the prefixed properties.
-     * 
-     * @return the prefixed properties
-     */
-    public PrefixedProperties getPrefixedProperties() {
-	return properties;
-    }
-
-    public void setConfiguredPrefix(final String configuredPrefix) {
-	properties.setLocalPrefix(configuredPrefix);
-    }
-
-    /**
-     * Sets the default prefix.
-     * 
-     * @param prefix
-     *            the new default prefix
-     */
-    public void setDefaultPrefix(final String prefix) {
-	properties.setDefaultPrefix(prefix);
-    }
-
-    /* (non-Javadoc)
-     * @see java.util.ResourceBundle#handleGetObject(java.lang.String)
-     */
-    @Override
-    protected Object handleGetObject(final String key) {
-	if (key == null) {
-	    throw new NullPointerException("The given key is null.");
-	}
-	return properties.get(key);
-    }
 
     /**
      * The Class PrefixedControl.
@@ -220,6 +103,35 @@ public class PrefixedResourceBundle extends ResourceBundle {
 	    this.prefixConfig = null;
 	}
 
+	private InputStream createInputStream(final ClassLoader loader, final boolean reload, final String resourceName) throws IOException {
+	    InputStream stream;
+	    try {
+		stream = AccessController.doPrivileged(
+			new PrivilegedExceptionAction<InputStream>() {
+			    @Override
+			    public InputStream run() throws IOException {
+				InputStream is = null;
+				if (reload) {
+				    final URL url = loader.getResource(resourceName);
+				    if (url != null) {
+					final URLConnection connection = url.openConnection();
+					if (connection != null) {
+					    connection.setUseCaches(false);
+					    is = connection.getInputStream();
+					}
+				    }
+				} else {
+				    is = loader.getResourceAsStream(resourceName);
+				}
+				return is;
+			    }
+			});
+	    } catch (final PrivilegedActionException e) {
+		throw (IOException) e.getException();
+	    }
+	    return stream;
+	}
+
 	/* (non-Javadoc)
 	 * @see java.util.ResourceBundle.Control#getFormats(java.lang.String)
 	 */
@@ -236,7 +148,7 @@ public class PrefixedResourceBundle extends ResourceBundle {
 	 */
 	@Override
 	public ResourceBundle newBundle(final String baseName, final Locale locale, final String format, final ClassLoader loader, final boolean reload) throws IllegalAccessException,
-	    InstantiationException, IOException {
+		InstantiationException, IOException {
 	    final String bundleName = toBundleName(baseName, locale);
 	    InputStream stream = null;
 	    try {
@@ -275,34 +187,6 @@ public class PrefixedResourceBundle extends ResourceBundle {
 	    }
 	    return null;
 	}
-
-	private InputStream createInputStream(final ClassLoader loader, final boolean reload, final String resourceName) throws IOException {
-	    InputStream stream;
-	    try {
-		stream = AccessController.doPrivileged(
-		                         new PrivilegedExceptionAction<InputStream>() {
-			                     public InputStream run() throws IOException {
-			                         InputStream is = null;
-			                         if (reload) {
-				                     final URL url = loader.getResource(resourceName);
-				                     if (url != null) {
-				                         final URLConnection connection = url.openConnection();
-				                         if (connection != null) {
-					                     connection.setUseCaches(false);
-					                     is = connection.getInputStream();
-				                         }
-				                     }
-			                         } else {
-				                     is = loader.getResourceAsStream(resourceName);
-			                         }
-			                         return is;
-			                     }
-		                         });
-	    } catch (final PrivilegedActionException e) {
-		throw (IOException) e.getException();
-	    }
-	    return stream;
-	}
     }
 
     @SuppressWarnings("rawtypes")
@@ -324,5 +208,122 @@ public class PrefixedResourceBundle extends ResourceBundle {
 	    return it.next();
 	}
 
+    }
+
+    public static PrefixedResourceBundle getPrefixedResourceBundle(final String baseFileName, final Locale locale) throws IOException {
+	ResourceBundle bundle = ResourceBundle.getBundle(baseFileName, locale, new PrefixedControl());
+	while (bundle != null && !(bundle instanceof PrefixedResourceBundle)) { //a prior call to getBundle might be called without the proper Control class. We need to clear the cache.
+	    ResourceBundle.clearCache();
+	    bundle = ResourceBundle.getBundle(baseFileName, locale, new PrefixedControl());
+	}
+	return (PrefixedResourceBundle) bundle;
+    }
+
+    /**
+     * Gets the prefixed resource bundle.
+     * 
+     * @param baseFileName
+     *            the base file name
+     * @param locale
+     *            the locale
+     * @param prefixConfig
+     *            the prefix config
+     * @return the prefixed resource bundle
+     * @throws IOException
+     *             Signals that an I/O exception has occurred.
+     */
+    public static PrefixedResourceBundle getPrefixedResourceBundle(final String baseFileName, final Locale locale, final PrefixConfig prefixConfig) throws IOException {
+	ResourceBundle bundle = ResourceBundle.getBundle(baseFileName, locale, new PrefixedControl(prefixConfig));
+	while (bundle != null && !(bundle instanceof PrefixedResourceBundle)) {//a prior call to getBundle might be called without the proper Control class. We need to clear the cache.
+	    ResourceBundle.clearCache();
+	    bundle = ResourceBundle.getBundle(baseFileName, locale, new PrefixedControl(prefixConfig));
+	}
+	return (PrefixedResourceBundle) bundle;
+    }
+
+    /**
+     * Gets the prefixed resource bundle.
+     * 
+     * @param baseFileName
+     *            the base file name
+     * @param locale
+     *            the locale
+     * @param defaultPrefix
+     *            the default prefix
+     * @return the prefixed resource bundle
+     * @throws IOException
+     *             Signals that an I/O exception has occurred.
+     */
+    public static PrefixedResourceBundle getPrefixedResourceBundle(final String baseFileName, final Locale locale, final String defaultPrefix) throws IOException {
+	ResourceBundle bundle = ResourceBundle.getBundle(baseFileName, locale, new PrefixedControl(defaultPrefix));
+	while (bundle != null && !(bundle instanceof PrefixedResourceBundle)) { //a prior call to getBundle might be called without the proper Control class. We need to clear the cache.
+	    ResourceBundle.clearCache();
+	    bundle = ResourceBundle.getBundle(baseFileName, locale, new PrefixedControl(defaultPrefix));
+	}
+	return (PrefixedResourceBundle) bundle;
+    }
+
+    private final PrefixedProperties properties;
+
+    /**
+     * Instantiates a new prefixed resource bundle.
+     * 
+     * @param properties
+     *            the properties
+     */
+    public PrefixedResourceBundle(final PrefixedProperties properties) {
+	this.properties = properties;
+    }
+
+    /**
+     * Gets the configured prefix.
+     * 
+     * @return the configured prefix
+     */
+    public String getConfiguredPrefix() {
+	return properties.getEffectivePrefix();
+    }
+
+    /* (non-Javadoc)
+     * @see java.util.ResourceBundle#getKeys()
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public Enumeration<String> getKeys() {
+	return new ResouceBundleEnumeration(properties.stringPropertyNames().iterator());
+    }
+
+    /**
+     * Gets the prefixed properties.
+     * 
+     * @return the prefixed properties
+     */
+    public PrefixedProperties getPrefixedProperties() {
+	return properties;
+    }
+
+    /* (non-Javadoc)
+     * @see java.util.ResourceBundle#handleGetObject(java.lang.String)
+     */
+    @Override
+    protected Object handleGetObject(final String key) {
+	if (key == null) {
+	    throw new NullPointerException("The given key is null.");
+	}
+	return properties.get(key);
+    }
+
+    public void setConfiguredPrefix(final String configuredPrefix) {
+	properties.setLocalPrefix(configuredPrefix);
+    }
+
+    /**
+     * Sets the default prefix.
+     * 
+     * @param prefix
+     *            the new default prefix
+     */
+    public void setDefaultPrefix(final String prefix) {
+	properties.setDefaultPrefix(prefix);
     }
 }

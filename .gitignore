@@ -6,3 +6,6 @@ pp-core/.settings/
 .settings/
 target/
 *.properties
+pom.xml.next
+pp-core/pom.xml.next
+pp-spring/pom.xml.next

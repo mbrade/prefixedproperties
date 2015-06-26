@@ -1,6 +1,6 @@
 /*
+ *
  * Copyright (c) 2010, Marco Brade
-							[null]
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,6 +24,7 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package net.sf.prefixedproperties.config;
 
 import java.util.Arrays;
@@ -60,7 +61,7 @@ public class StagingPrefixConfig extends DefaultPrefixConfig {
     private static final long serialVersionUID = 1L;
 
     private final static String[] STAGES = { StagingPrefixConfig.LOCAL, StagingPrefixConfig.DEV, StagingPrefixConfig.INTEGRATION, StagingPrefixConfig.QA, StagingPrefixConfig.TEST,
-	                                    StagingPrefixConfig.STAGE, StagingPrefixConfig.PRELIVE, StagingPrefixConfig.LIVE };
+	    StagingPrefixConfig.STAGE, StagingPrefixConfig.PRELIVE, StagingPrefixConfig.LIVE };
 
     /**
      * Instantiates a new staging prefix config without setting the current prefix.

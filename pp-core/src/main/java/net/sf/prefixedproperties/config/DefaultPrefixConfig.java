@@ -1,6 +1,6 @@
 /*
+ *
  * Copyright (c) 2010, Marco Brade
-							[null]
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,6 +24,7 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package net.sf.prefixedproperties.config;
 
 import java.io.IOException;
@@ -188,6 +189,45 @@ public class DefaultPrefixConfig implements PrefixConfig {
 	return true;
     }
 
+    /**
+     * Gets the iterator.
+     * 
+     * @return the iterator
+     */
+    private Iterator<String> getIterator() {
+	final Set<String> copy = getPrefixes();
+	final Iterator<String> copyIt = copy.iterator();
+	return new Iterator<String>() {
+	    private String lastOne = null;
+
+	    @Override
+	    public boolean hasNext() {
+		return copyIt.hasNext();
+	    }
+
+	    @Override
+	    public String next() {
+		if (copyIt.hasNext()) {
+		    lastOne = copyIt.next();
+		} else {
+		    throw new NoSuchElementException();
+		}
+		return lastOne;
+	    }
+
+	    @Override
+	    public void remove() {
+		try {
+		    lock.writeLock().lock();
+		    prefixes.remove(lastOne);
+		} finally {
+		    lock.writeLock().unlock();
+		}
+	    }
+
+	};
+    }
+
     @Override
     public String getLocalPrefix() {
 	lock.readLock().lock();
@@ -208,6 +248,18 @@ public class DefaultPrefixConfig implements PrefixConfig {
 	    return defaultPrefix;
 	}
 	return result;
+    }
+
+    /* (non-Javadoc)
+     * @see net.sf.prefixedproperties.config.PrefixC#getPrefixDelimiter()
+     */
+    /**
+     * Gets the prefix delimiter.
+     * 
+     * @return the prefix delimiter
+     */
+    protected char getPrefixDelimiter() {
+	return PREFIXDELIMITER;
     }
 
     /* (non-Javadoc)
@@ -314,6 +366,19 @@ public class DefaultPrefixConfig implements PrefixConfig {
 	return getIterator();
     }
 
+    private void readObject(final ObjectInputStream ois) throws ClassNotFoundException, IOException {
+	defaultPrefix = (String) ois.readObject();
+	final int size = ois.readInt();
+	prefixes = new TreeSet<String>();
+	for (int i = 0; i < size; i++) {
+	    prefixes.add((String) ois.readObject());
+	}
+	localPrefix = new ThreadLocal<String>();
+	localPrefix.set((String) ois.readObject());
+	lock = new ReentrantReadWriteLock();
+
+    }
+
     /* (non-Javadoc)
      * @see net.sf.prefixedproperties.config.PrefixConfig#setDefaultPrefix(java.lang.String)
      */
@@ -361,108 +426,6 @@ public class DefaultPrefixConfig implements PrefixConfig {
 	}
     }
 
-    /* (non-Javadoc)
-     * @see net.sf.prefixedproperties.config.PrefixConfig#startsWithCurrentPrefix(java.lang.String)
-     */
-    @Override
-    public boolean startsWithCurrentPrefix(final String key) {
-	lock.readLock().lock();
-	try {
-	    if (getPrefix() != null && key != null) {
-		return key.startsWith(getPrefix() + getPrefixDelimiter());
-	    }
-	} finally {
-	    lock.readLock().unlock();
-	}
-	return false;
-    }
-
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
-	return "PrefixConfig [prefixDelimiter=" + PREFIXDELIMITER + ", prefixes=" + prefixes + "]";
-    }
-
-    /**
-     * Gets the iterator.
-     * 
-     * @return the iterator
-     */
-    private Iterator<String> getIterator() {
-	final Set<String> copy = getPrefixes();
-	final Iterator<String> copyIt = copy.iterator();
-	return new Iterator<String>() {
-	    private String lastOne = null;
-
-	    @Override
-	    public boolean hasNext() {
-		return copyIt.hasNext();
-	    }
-
-	    @Override
-	    public String next() {
-		if (copyIt.hasNext()) {
-		    lastOne = copyIt.next();
-		} else {
-		    throw new NoSuchElementException();
-		}
-		return lastOne;
-	    }
-
-	    @Override
-	    public void remove() {
-		try {
-		    lock.writeLock().lock();
-		    prefixes.remove(lastOne);
-		} finally {
-		    lock.writeLock().unlock();
-		}
-	    }
-
-	};
-    }
-
-    private void readObject(final ObjectInputStream ois) throws ClassNotFoundException, IOException {
-	defaultPrefix = (String) ois.readObject();
-	final int size = ois.readInt();
-	prefixes = new TreeSet<String>();
-	for (int i = 0; i < size; i++) {
-	    prefixes.add((String) ois.readObject());
-	}
-	localPrefix = new ThreadLocal<String>();
-	localPrefix.set((String) ois.readObject());
-	lock = new ReentrantReadWriteLock();
-
-    }
-
-    private void writeObject(final ObjectOutputStream oos) throws IOException {
-	lock.readLock().lock();
-	try {
-	    oos.writeObject(defaultPrefix);
-	    oos.writeInt(prefixes.size());
-	    for (final String aPrefix : prefixes) {
-		oos.writeObject(aPrefix);
-	    }
-	    oos.writeObject(localPrefix.get());
-	} finally {
-	    lock.readLock().unlock();
-	}
-    }
-
-    /* (non-Javadoc)
-     * @see net.sf.prefixedproperties.config.PrefixC#getPrefixDelimiter()
-     */
-    /**
-     * Gets the prefix delimiter.
-     * 
-     * @return the prefix delimiter
-     */
-    protected char getPrefixDelimiter() {
-	return PREFIXDELIMITER;
-    }
-
     /**
      * Sets the prefixes.
      * 
@@ -499,6 +462,44 @@ public class DefaultPrefixConfig implements PrefixConfig {
      */
     protected void setPrefixes(final String... prefixesToSet) {
 	setPrefixes(Arrays.asList(prefixesToSet));
+    }
+
+    /* (non-Javadoc)
+     * @see net.sf.prefixedproperties.config.PrefixConfig#startsWithCurrentPrefix(java.lang.String)
+     */
+    @Override
+    public boolean startsWithCurrentPrefix(final String key) {
+	lock.readLock().lock();
+	try {
+	    if (getPrefix() != null && key != null) {
+		return key.startsWith(getPrefix() + getPrefixDelimiter());
+	    }
+	} finally {
+	    lock.readLock().unlock();
+	}
+	return false;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+	return "PrefixConfig [prefixDelimiter=" + PREFIXDELIMITER + ", prefixes=" + prefixes + "]";
+    }
+
+    private void writeObject(final ObjectOutputStream oos) throws IOException {
+	lock.readLock().lock();
+	try {
+	    oos.writeObject(defaultPrefix);
+	    oos.writeInt(prefixes.size());
+	    for (final String aPrefix : prefixes) {
+		oos.writeObject(aPrefix);
+	    }
+	    oos.writeObject(localPrefix.get());
+	} finally {
+	    lock.readLock().unlock();
+	}
     }
 
 }

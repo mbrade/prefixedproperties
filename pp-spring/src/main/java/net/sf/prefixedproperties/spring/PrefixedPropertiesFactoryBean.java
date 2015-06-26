@@ -1,6 +1,6 @@
 /*
+ *
  * Copyright (c) 2010, Marco Brade
-							[null]
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -78,10 +78,138 @@ public class PrefixedPropertiesFactoryBean extends PropertiesFactoryBean {
 
     protected EnvironmentFactory environmentFactory = null;
 
+    /**
+     * Creates the prefixed properties.
+     * 
+     * @return the prefixed properties
+     */
+    @Override
+    protected synchronized PrefixedProperties createProperties() {
+	if (myProperties == null) {
+	    PrefixedProperties resultProperties = null;
+	    String environment = defaultPrefix;
+	    if (environmentFactory != null) {
+		environment = environmentFactory.getEnvironment();
+	    } else if (defaultPrefixSystemPropertyKey != null) {
+		environment = System.getProperty(defaultPrefixSystemPropertyKey);
+		if (environment == null) {
+		    logger.warn(String.format("Didn't found system property key to set default prefix: %1s", defaultPrefixSystemPropertyKey));
+		}
+	    }
+	    if (prefixConfigList != null) {
+		resultProperties = PrefixedProperties.createCascadingPrefixProperties(prefixConfigList);
+	    } else {
+		if (environment != null) {
+		    resultProperties = PrefixedProperties.createCascadingPrefixProperties(environment);
+		} else {
+		    resultProperties = new PrefixedProperties();
+		}
+	    }
+	    resultProperties.setDefaultPrefix(environment);
+	    if (logger.isInfoEnabled()) {
+		logger.info(String.format("Setting default prefix to: %1s", environment));
+	    }
+	    myProperties = resultProperties;
+	}
+	return myProperties;
+    }
+
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
     public Class getObjectType() {
 	return PrefixedProperties.class;
+    }
+
+    /**
+     * Load properties.
+     * 
+     * @param props
+     *            the props
+     * @throws IOException
+     *             Signals that an I/O exception has occurred.
+     */
+    @Override
+    protected void loadProperties(final Properties props) throws IOException {
+	if (locations != null) {
+	    for (int i = 0; i < locations.length; i++) {
+		final Resource location = locations[i];
+		if (logger.isInfoEnabled()) {
+		    logger.info("Loading properties file from " + location);
+		}
+		File file = null;
+		InputStream is = null;
+		try {
+		    try {
+			file = location.getFile();
+			is = new BufferedInputStream(new FileInputStream(file));
+		    } catch (final IOException ie) {//ignore
+		    } finally {
+			if (file == null) {
+			    is = location.getInputStream();
+			}
+		    }
+
+		    if (location.getFilename().toLowerCase().endsWith(XML_FILE_EXTENSION)) {
+			persister.loadFromXml(props, is);
+		    } else if (location.getFilename().toLowerCase().endsWith(JSON_FILE_EXTENSION)) {
+			if (fileEncoding != null) {
+			    persister.loadFromJson(props, new InputStreamReader(is, Charset.forName(fileEncoding)));
+			} else {
+			    persister.loadFromJson(props, is);
+			}
+		    } else {
+			if (fileEncoding != null) {
+			    persister.load(props, new InputStreamReader(is, Charset.forName(fileEncoding)));
+			} else {
+			    persister.load(props, is);
+			}
+		    }
+		} catch (final IOException ex) {
+		    if (ignoreResourceNotFound) {
+			if (logger.isWarnEnabled()) {
+			    logger.warn(String.format("Could not load properties from %1s", location), ex);
+			}
+		    } else {
+			throw ex;
+		    }
+		} finally {
+		    if (is != null) {
+			is.close();
+		    }
+		}
+	    }
+	}
+    }
+
+    /* (non-Javadoc)
+     * @see org.springframework.core.io.support.PropertiesLoaderSupport#mergeProperties()
+     */
+    @Override
+    protected Properties mergeProperties() throws IOException {
+
+	final PrefixedProperties myProperties = createProperties();
+
+	if (localOverride) {
+	    // Load properties from file upfront, to let local properties override.
+	    loadProperties(myProperties);
+	}
+	if (localProperties != null) {
+	    for (int i = 0; i < localProperties.length; i++) {
+		final Properties props = localProperties[i];
+		if (props != null) {
+		    for (final Enumeration<Object> en = props.keys(); en.hasMoreElements();) {
+			final Object key = en.nextElement();
+			myProperties.put(key, props.get(key));
+		    }
+		}
+	    }
+	}
+	if (!localOverride) {
+	    // Load properties from file afterwards, to let those properties override.
+	    loadProperties(myProperties);
+	}
+
+	return myProperties;
     }
 
     /**
@@ -184,134 +312,6 @@ public class PrefixedPropertiesFactoryBean extends PropertiesFactoryBean {
     @Override
     public void setPropertiesArray(final Properties... propertiesArray) {
 	localProperties = propertiesArray;
-    }
-
-    /**
-     * Creates the prefixed properties.
-     * 
-     * @return the prefixed properties
-     */
-    @Override
-    protected synchronized PrefixedProperties createProperties() {
-	if (myProperties == null) {
-	    PrefixedProperties resultProperties = null;
-	    String environment = defaultPrefix;
-	    if (environmentFactory != null) {
-		environment = environmentFactory.getEnvironment();
-	    } else if (defaultPrefixSystemPropertyKey != null) {
-		environment = System.getProperty(defaultPrefixSystemPropertyKey);
-		if (environment == null) {
-		    logger.warn(String.format("Didn't found system property key to set default prefix: %1s", defaultPrefixSystemPropertyKey));
-		}
-	    }
-	    if (prefixConfigList != null) {
-		resultProperties = PrefixedProperties.createCascadingPrefixProperties(prefixConfigList);
-	    } else {
-		if (environment != null) {
-		    resultProperties = PrefixedProperties.createCascadingPrefixProperties(environment);
-		} else {
-		    resultProperties = new PrefixedProperties();
-		}
-	    }
-	    resultProperties.setDefaultPrefix(environment);
-	    if (logger.isInfoEnabled()) {
-		logger.info(String.format("Setting default prefix to: %1s", environment));
-	    }
-	    myProperties = resultProperties;
-	}
-	return myProperties;
-    }
-
-    /**
-     * Load properties.
-     * 
-     * @param props
-     *            the props
-     * @throws IOException
-     *             Signals that an I/O exception has occurred.
-     */
-    @Override
-    protected void loadProperties(final Properties props) throws IOException {
-	if (locations != null) {
-	    for (int i = 0; i < locations.length; i++) {
-		final Resource location = locations[i];
-		if (logger.isInfoEnabled()) {
-		    logger.info("Loading properties file from " + location);
-		}
-		File file = null;
-		InputStream is = null;
-		try {
-		    try {
-			file = location.getFile();
-			is = new BufferedInputStream(new FileInputStream(file));
-		    } catch (final IOException ie) {//ignore
-		    } finally {
-			if (file == null) {
-			    is = location.getInputStream();
-			}
-		    }
-
-		    if (location.getFilename().toLowerCase().endsWith(XML_FILE_EXTENSION)) {
-			persister.loadFromXml(props, is);
-		    } else if (location.getFilename().toLowerCase().endsWith(JSON_FILE_EXTENSION)) {
-			if (fileEncoding != null) {
-			    persister.loadFromJson(props, new InputStreamReader(is, Charset.forName(fileEncoding)));
-			} else {
-			    persister.loadFromJson(props, is);
-			}
-		    } else {
-			if (fileEncoding != null) {
-			    persister.load(props, new InputStreamReader(is, Charset.forName(fileEncoding)));
-			} else {
-			    persister.load(props, is);
-			}
-		    }
-		} catch (final IOException ex) {
-		    if (ignoreResourceNotFound) {
-			if (logger.isWarnEnabled()) {
-			    logger.warn(String.format("Could not load properties from %1s", location), ex);
-			}
-		    } else {
-			throw ex;
-		    }
-		} finally {
-		    if (is != null) {
-			is.close();
-		    }
-		}
-	    }
-	}
-    }
-
-    /* (non-Javadoc)
-     * @see org.springframework.core.io.support.PropertiesLoaderSupport#mergeProperties()
-     */
-    @Override
-    protected Properties mergeProperties() throws IOException {
-
-	final PrefixedProperties myProperties = createProperties();
-
-	if (localOverride) {
-	    // Load properties from file upfront, to let local properties override.
-	    loadProperties(myProperties);
-	}
-	if (localProperties != null) {
-	    for (int i = 0; i < localProperties.length; i++) {
-		final Properties props = localProperties[i];
-		if (props != null) {
-		    for (final Enumeration<Object> en = props.keys(); en.hasMoreElements();) {
-			final Object key = en.nextElement();
-			myProperties.put(key, props.get(key));
-		    }
-		}
-	    }
-	}
-	if (!localOverride) {
-	    // Load properties from file afterwards, to let those properties override.
-	    loadProperties(myProperties);
-	}
-
-	return myProperties;
     }
 
 }

@@ -1,6 +1,6 @@
 /*
+ *
  * Copyright (c) 2010, Marco Brade
-							[null]
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,6 +24,7 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package net.sf.prefixedproperties;
 
 import java.util.concurrent.CyclicBarrier;
@@ -33,6 +34,17 @@ import net.sf.prefixedproperties.config.GenderPrefixConfig;
 import net.sf.prefixedproperties.config.StagingPrefixConfig;
 
 public class Examples {
+
+    @SuppressWarnings("unused")
+    private static class SystemPrefixConfig extends DefaultPrefixConfig {
+
+	private static final long serialVersionUID = 1L;
+
+	public SystemPrefixConfig() {
+	    super(new String[] { "SYSTEM_A", "SYSTEM_B", "SYSTEM_C" }, "SYSTEM_A");
+	}
+
+    }
 
     /**
      * @param args
@@ -114,17 +126,6 @@ public class Examples {
 		}
 	    };
 	    th2.start();
-	}
-
-    }
-
-    @SuppressWarnings("unused")
-    private static class SystemPrefixConfig extends DefaultPrefixConfig {
-
-	private static final long serialVersionUID = 1L;
-
-	public SystemPrefixConfig() {
-	    super(new String[] { "SYSTEM_A", "SYSTEM_B", "SYSTEM_C" }, "SYSTEM_A");
 	}
 
     }

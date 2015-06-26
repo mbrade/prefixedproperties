@@ -1,6 +1,6 @@
 /*
+ *
  * Copyright (c) 2010, Marco Brade
-							[null]
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,6 +24,7 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package net.sf.prefixedproperties.config;
 
 import java.util.Set;
@@ -51,6 +52,20 @@ public final class DynamicPrefixConfig extends DefaultPrefixConfig {
 	super(new String[] { prefix }, prefix);
     }
 
+    /**
+     * Adds the given prefix to the PrefixConfig.
+     * 
+     * @param prefixString
+     *            the prefix string
+     */
+    protected synchronized void addPrefix(final String prefixString) {
+	if (prefixString != null) {
+	    final Set<String> prefixes = getPrefixes();
+	    prefixes.add(prefixString);
+	    setPrefixes(prefixes);
+	}
+    }
+
     @Override
     public boolean isDynamic() {
 	return true;
@@ -69,20 +84,6 @@ public final class DynamicPrefixConfig extends DefaultPrefixConfig {
     public void setPrefix(final String prefixString) {
 	addPrefix(prefixString);
 	super.setPrefix(prefixString);
-    }
-
-    /**
-     * Adds the given prefix to the PrefixConfig.
-     * 
-     * @param prefixString
-     *            the prefix string
-     */
-    protected synchronized void addPrefix(final String prefixString) {
-	if (prefixString != null) {
-	    final Set<String> prefixes = getPrefixes();
-	    prefixes.add(prefixString);
-	    setPrefixes(prefixes);
-	}
     }
 
 }
