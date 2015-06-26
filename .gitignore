@@ -5,3 +5,4 @@ pp-spring/.project
 pp-core/.settings/
 .settings/
 target/
+*.properties
