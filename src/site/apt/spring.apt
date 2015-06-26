@@ -1,0 +1,183 @@
+~~
+~~ Copyright (c) 2010, Marco Brade [https://sourceforge.net/users/mbrade] All rights reserved.
+~~
+~~ Redistribution and use in source and binary forms, with or without
+~~ modification, are permitted provided that the following conditions are met:
+~~
+~~     * Redistributions of source code must retain the above copyright notice,
+~~       this list of conditions and the following disclaimer.
+~~     * Redistributions in binary form must reproduce the above copyright notice,
+~~       this list of conditions and the following disclaimer in the documentation
+~~       and/or other materials provided with the distribution.
+~~
+~~ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+~~ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+~~ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+~~ ARE DISCLAIMED.
+~~ IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY
+~~ DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+~~ (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+~~ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+~~ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+~~ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+~~ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+~~
+
+
+Spring and PrefixedProperties
+
+  Spring is the leading IOC-container and with the PropertiesPlaceHolder and the PropertyOverrideConfigurer it is easy to use Properties within the Spring Context.
+  PrefixedProperties comes with it's own PrefixedPropertiesPlaceHolder and PrefixedPropertyOverrideConfigurer. They extends the PropertiesPlaceHolder and PropertyOverrideConfigurer from Spring and gives the possibility to have different Properties for different environments within Spring.
+  
+  You can use setDefaultPrefix to specify the environment. There is no need to specify any PrefixConfigs. Or you can specify a System-Property which should be used for the environment.
+
+  <<application.properties:>>
+  
++--------------------------+  
+  test.key1=testvalue1
+  test.key2=testvalue2
+  liv.key1=myLiveValue1
+  liv.key2=myLiveValue2
++--------------------------+
+  
+  <<applicationContext.xml:>>
+  
++---------------------------------------------------------------------------------------------------------------------------------------------+ 
+ 
+  <?xml version="1.0" encoding="UTF-8"?>
+  <beans
+		xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:p="http://www.springframework.org/schema/p"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+	
+		<bean class="net.sf.prefixedproperties.spring.PrefixedPropertiesPlaceholderConfigurer">
+			<property name="defaultPrefixSystemPropertyKey" value="environment"/>
+			<property name="location" value="classpath:application.properties"/>
+		</bean>
+		
+		<bean id="bean1" class="net.sf.prefixedproperties.Bean">
+			<property name="property1" value="${key1}"</property>
+			<property name="property2" value="${key2}"</property>
+		</bean>
+
+  </beans>
+  
++---------------------------------------------------------------------------------------------------------------------------------------------+
+    
+  With <<java -cp ... -Denvironment=test ...>> the environment will be set.
+  
+  If you use a different way to set your environment, you can implement your own EnvironmentFactory that is used to get an prefix from it which will be used as defaultPrefixConfig.
+  
++---------------------------------------------------------------------------------------------------------------------------------------------+
+
+  <?xml version="1.0" encoding="UTF-8"?>
+  <beans
+		xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:p="http://www.springframework.org/schema/p"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+	
+		<bean class="net.sf.prefixedproperties.spring.PrefixedPropertiesPlaceholderConfigurer">
+			<property name="environmentFactory" ref="environmentFactory"/>
+			<property name="location" value="classpath:application.properties"/>
+		</bean>
+		
+		<bean id="environmentFactory" class="com.company.MyEnvironmentFactory">
+			...
+		</bean>
+		
+		<bean id="bean1" class="net.sf.prefixedproperties.Bean">
+			<property name="property1" value="${key1}"</property>
+			<property name="property2" value="${key2}"</property>
+		</bean>
+
+  </beans>  
+
++---------------------------------------------------------------------------------------------------------------------------------------------+
+
+  Or just set your environment directly:
+  
++---------------------------------------------------------------------------------------------------------------------------------------------+
+
+  <?xml version="1.0" encoding="UTF-8"?>
+  <beans
+		xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:p="http://www.springframework.org/schema/p"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+	
+		<bean class="net.sf.prefixedproperties.spring.PrefixedPropertiesPlaceholderConfigurer">
+			<property name="defaultPrefix" value"myEnvironement.myHost"/>
+			<property name="location" value="classpath:application.properties"/>
+		</bean>
+		
+		<bean id="bean1" class="net.sf.prefixedproperties.Bean">
+			<property name="property1" value="${key1}"</property>
+			<property name="property2" value="${key2}"</property>
+		</bean>
+
+  </beans>  
+
++---------------------------------------------------------------------------------------------------------------------------------------------+
+
+  A special function of the PrefixedPropertiesPlaceholderConfigurer is the possibility to process the replacements of other properties within the spring context.
+  For that you can set the property processProperties to true. 
+  This is an powerful function in case you need to load your own subset of properties and you don't want to mix them up with other property configurations.
+  For example Log4j.
+
+  <<applicationContext.xml:>>
+  
++---------------------------------------------------------------------------------------------------------------------------------------------+
+
+  <?xml version="1.0" encoding="UTF-8"?>
+  <beans
+		xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:p="http://www.springframework.org/schema/p"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+	
+		<bean class="net.sf.prefixedproperties.spring.PrefixedPropertiesPlaceholderConfigurer">
+			<property name="defaultPrefix" value"myEnvironement.myHost"/>
+			<property name="location" value="classpath:application.properties"/>
+			<property name="processOtherProperties" value="true"/>
+		</bean>
+	  
+	  	<bean id="log4j" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+			<property name="location" value="classpath:log4j_replacements.properties"/>
+		</bean>
+  </beans>
+  	
++---------------------------------------------------------------------------------------------------------------------------------------------+
+
+  <<application.properties:>>
+  
++---------------------------------------------------------------------------------------------------------------------------------------------+  
+  dev.LOGLEVEL=debug
+  test.LOGLEVEL=debug
+  qa.LOGLEVEL=info
+  prod.LOGLEVEL=warn
+  ROOTLOGGER=CONSOLE, CONSOLE2
+  prod.ROOTLOGGER=CONSOLE
++---------------------------------------------------------------------------------------------------------------------------------------------+
+
+  <<log4j_replacements.properties:>>
+
++---------------------------------------------------------------------------------------------------------------------------------------------+  
+    log4j.rootLogger=${LOGLEVEL}, ${ROOTLOGGER}
+
+	# CONSOLE is set to be a ConsoleAppender.
+	log4j.appender.CONSOLE=org.apache.log4j.ConsoleAppender
+	
+	# CONSOLE uses PatternLayout.
+	log4j.appender.CONSOLE.layout=org.apache.log4j.PatternLayout
+	log4j.appender.CONSOLE.layout.ConversionPattern=%-4r [%t] %-5p %c %x - %m%n
+	
+	
+	# CONSOLE is set to be a ConsoleAppender.
+	log4j.appender.CONSOLE2=org.apache.log4j.ConsoleAppender
+	
+	# CONSOLE uses PatternLayout.
+	log4j.appender.CONSOLE2.layout=org.apache.log4j.PatternLayout
+	log4j.appender.CONSOLE2.layout.ConversionPattern=%-4r %-5p %c %x - %m%n
++---------------------------------------------------------------------------------------------------------------------------------------------+

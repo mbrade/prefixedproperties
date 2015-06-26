@@ -1,0 +1,6 @@
+*.classpath
+pp-spring/.project
+.springBeans
+.project
+pp-core/.settings/
+.settings/

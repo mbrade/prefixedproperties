@@ -1,0 +1,93 @@
+~~
+~~ Copyright (c) 2010, Marco Brade [https://sourceforge.net/users/mbrade] All rights reserved.
+~~
+~~ Redistribution and use in source and binary forms, with or without
+~~ modification, are permitted provided that the following conditions are met:
+~~
+~~     * Redistributions of source code must retain the above copyright notice,
+~~       this list of conditions and the following disclaimer.
+~~     * Redistributions in binary form must reproduce the above copyright notice,
+~~       this list of conditions and the following disclaimer in the documentation
+~~       and/or other materials provided with the distribution.
+~~
+~~ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+~~ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+~~ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+~~ ARE DISCLAIMED.
+~~ IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY
+~~ DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+~~ (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+~~ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+~~ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+~~ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+~~ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+~~
+
+Prefixed ResourceBunlde:
+
+  With PrefixedResourceBundle you can have localized and environment depended messages. 
+  It works like a normal ResourceBundle with language_country_variant as localization identifier within your filename.
+  
+  <<For example:>>
+  
+  * messages_de_DE.properties
+  * messages_de_DE_bw.properties
+  * messages_en.properties
+  * messages.properties
+  
+  Since in the back a normal PrefixedProperties object does the work. You can also have xml or json as your message format and even mix them. 
+  PrefixedResourceBundle will find them automatically.
+  
+  <<For example:>>
+  
+  * messages_de_DE.json
+  * messages_de_DE_bw.properties
+  * messages_en.xml
+  * messages.properties
+  
+  To create a PrefixedResourceBundle you can use one of three factory methods to instantiate it.
+  
+Example:
+
+ In this example we use PrefixedResourceBundle to load the messages for a specific locale and environment.
+
+  <<messages_en.properties:>>
+  
++-------------------------------------------------+
+  greetings=Hello {0}
+  male.greetings=Hello Mr. {0}
+  female.greetings=Hello Mrs. {0}
++-------------------------------------------------+
+
+	<<messages_de.properties:>>
+  
++-------------------------------------------------+
+  greetings=Hallo {0}
+  male.greetings=Hallo Herr {0}
+  female.greetings=Hallo Frau {0}
++-------------------------------------------------+
+  
+  <<usage with PrefixedRescourceBundle:>>
+
++------------------------------------------------------------------------------------------------------------------------------------------------------------+
+  
+  //At first configure and create the PrefixedResourceBundle 
+  final PrefixedResourceBundle bundle_en = PrefixedResourceBundle.getPrefixedResourceBundle("messages", Locale.ENGLISH, "environment");
+  final PrefixedResourceBundle bundle_de = PrefixedResourceBundle.getPrefixedResourceBundle("messages", Locale.GERMAN, "environment");
+  
+  //in this case we use Thread depended configurations of the prefix.
+  bundle_en.setConfiguredPrefix("male"); 
+  bundle_en.getString("greetings"); // will return Hello Mr. {0}
+  
+  //while within another Thread the following could be done.
+  bundle_en.setConfiguredPrefix("female"); 
+  bundle_en.getString("greetings"); // will return Hello Mrs. {0}
+  
++------------------------------------------------------------------------------------------------------------------------------------------------------------+  
+  
+  As you can see this gets quite easy for you to access different resource bundles entries according to a specific state or environment just by changing the context of the ResourceBundle.
+  So instead of making a decision if a user is male or female and choose the right bundle key, just set the context once and than get your message entries straight forward.
+  
+  You can also use cascading prefixes for your configuredPrefix for example male.child, male.teene, female.adult and so on.
+   
+   

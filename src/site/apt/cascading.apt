@@ -1,0 +1,126 @@
+~~
+~~ Copyright (c) 2010, Marco Brade [https://sourceforge.net/users/mbrade] All rights reserved.
+~~
+~~ Redistribution and use in source and binary forms, with or without
+~~ modification, are permitted provided that the following conditions are met:
+~~
+~~     * Redistributions of source code must retain the above copyright notice,
+~~       this list of conditions and the following disclaimer.
+~~     * Redistributions in binary form must reproduce the above copyright notice,
+~~       this list of conditions and the following disclaimer in the documentation
+~~       and/or other materials provided with the distribution.
+~~
+~~ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+~~ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+~~ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+~~ ARE DISCLAIMED.
+~~ IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY
+~~ DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+~~ (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+~~ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+~~ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+~~ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+~~ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+~~
+
+Cascading Environments:
+
+  With cascading properties you can have environments which have again other environments.\ 
+  This can be useful if you need different configurations not only for one environment but also for an systems, hosts, users or groups while other properties don't need that.
+  
+  <<Common use cases are:>>
+  
+  * users
+  
+  * hosts
+  
+  * services
+  
+  * components
+  
+  
+Example:
+
+ In this example we have two environments and three databases with different passwords for each environment.
+
+  <<properties-file:>>
+  
++-------------------------------------------------+
+  dev.product_db.password=Cryptic
+  dev.account_db.password=Secure
+  dev.rights_db.password=Obscure
+  test.product_db.password=TestCryptic
+  test.account_db.password=TestSecure
+  test.rights_db.password=TestObscure
++-------------------------------------------------+
+  
+  <<usage with PrefixedProperties:>>
+
++-----------------------------------------------------------------------------------------------------------+
+  
+  //At first configure PrefixedProperties to use cascading-prefixes
+  PrefixedProperties properties = PrefixedProperties.createCascadingPrefixProperties("dev.rights_db");
+  properties.load("A_Properties_File.properties");
+  
+  properties.get("password"); //will return Obscure
+  //changes the prefix configuration
+  properties.setConfiguredPrefix("dev.account_db");
+  properties.get("password"); //will return Secure
+  
+  //change the prefix again now we forgot the first environment
+  properties.setConfiguredPrefix("product_db");
+  properties.get("password"); //will return Cryptic
+  
++-----------------------------------------------------------------------------------------------------------+  
+  
+Explanation
+  
+  PrefixedProperties "learns" new prefixes on the fly while setting them. This is easy to use but also has a disadvantage. 
+  If you use cascading environments you have to be careful with the prefix configuration. This is because you have to preserve the correct environment order.
+  
+  In this example PrefixedProperties has been configured to use two cascading environments with the prefixes 'dev' and 'rights_db'. In the second step 'dev.account_db' has been used to be the new prefix configuration.
+  While 'dev' is already known, PrefixedProperties will add 'account_db' as a second environment below 'dev' and besides 'rights_db'.
+  
+  And why does the last example work with just setting 'product_db'?
+  This is because PrefixedProperties always tries to set the most specific environment and in this case it is everything below 'dev'. 
+  It's more likely that a more specific environment should be changed than a more global one.\ 
+  
+  If you just want to switch from dev to test without setting any further environments we will get not the expected behavior if the wrong environment configuration is set.
+
++--------------------------------------------------------------------------------------------+
+  properties.setConfiguredPrefix("test");//changes the prefix configuration
+  properties.get("password"); //will return null
++--------------------------------------------------------------------------------------------+
+  
+  PrefixedProperties will register test on the same level as product_db, account_db and rights_db which is not we want. The right configuration would be the following:
+   
++--------------------------------------------------------------------------------------------+
+  properties.setConfiguredPrefix("test.product_db");//changes the prefix configuration
+  properties.get("password"); //will return Cryptic
++--------------------------------------------------------------------------------------------+
+
+  This becomes unhandy if you have more and more prefixes. The solution is to use PrefixConfigs.
+  
+  
+Configuration of PrefixedProperties
+
+  Since PrefixedProperties is also a normal Properties-Class you can use xml or properties-Files for configuration. One advantage of PrefixedProperties that it is also possible to use JSON-Files for loading and storing the configuration.\
+  You can use the loadFromJSON and storeToJSON methods to load and save JSON files. JSON has the advantage that the configuration looks the same as it would be used within PrefixProperties. So the configuration is more intuitiv. (But it's also easier to make syntactical mistakes.)
+
++-------------------------------------+  
+  {
+	  "liv" : {
+		  "connections" : 10,
+		  "deliverysrv" : {
+			  "database" : {
+				  "connections" : 20
+			  }
+		  }
+	  },
+	  "accountingsrv" : {
+		  "connections" : 30
+	  }
+  }   
++-------------------------------------+
+
+   

@@ -1,0 +1,59 @@
+~~
+~~ Copyright (c) 2010, Marco Brade [https://sourceforge.net/users/mbrade] All rights reserved.
+~~
+~~ Redistribution and use in source and binary forms, with or without
+~~ modification, are permitted provided that the following conditions are met:
+~~
+~~     * Redistributions of source code must retain the above copyright notice,
+~~       this list of conditions and the following disclaimer.
+~~     * Redistributions in binary form must reproduce the above copyright notice,
+~~       this list of conditions and the following disclaimer in the documentation
+~~       and/or other materials provided with the distribution.
+~~
+~~ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+~~ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+~~ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+~~ ARE DISCLAIMED.
+~~ IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY
+~~ DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+~~ (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+~~ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+~~ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+~~ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+~~ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+~~
+
+
+Fallbacks
+
+  Sometimes only a few properties need a specific configurations for an environment and maybe not all environments need a different one.\
+  To have all values duplicated for every environment just to have one exception would be very annoying.\
+  The clue is to use fallbacks which can be easily done be just skipping the prefixes.
+ 
+Example
+
+  <<properties-file:>>
+
++------------------------------------------+
+  dev.value=SPECIAL VALUE
+  value=DEFAULT VALUE
++------------------------------------------+
+
+  <<usage with PrefixedProperties:>>
+
++----------------------------------------------------------------------------------------------------------------------------------------+
+  PrefixedProperties properties = new PrefixedProperties("dev");
+  properties.load("A_Properties_File.properties");
+  
+  properties.get("value");//will return "SPECIAL VALUE"
+  
+  //switch the environment
+  properties.setDefaultPrefix("liv");
+  properties.get("value");//will return "DEFAULT VALUE"
+  
+  //to get the value for the dev-environment while using another environment you can also use the full qualified key name.
+  properties.get("dev.value");//will return "SPECIAL VALUE"
++----------------------------------------------------------------------------------------------------------------------------------------+
+
+To disable the fallback and only use the local prefixes it's possible to use setMixDefaultAndLocalPrefixSettings and to set it to false.
+ 

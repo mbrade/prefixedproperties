@@ -1,0 +1,147 @@
+~~
+~~ Copyright (c) 2010, Marco Brade [https://sourceforge.net/users/mbrade] All rights reserved.
+~~
+~~ Redistribution and use in source and binary forms, with or without
+~~ modification, are permitted provided that the following conditions are met:
+~~
+~~     * Redistributions of source code must retain the above copyright notice,
+~~       this list of conditions and the following disclaimer.
+~~     * Redistributions in binary form must reproduce the above copyright notice,
+~~       this list of conditions and the following disclaimer in the documentation
+~~       and/or other materials provided with the distribution.
+~~
+~~ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+~~ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+~~ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+~~ ARE DISCLAIMED.
+~~ IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY
+~~ DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+~~ (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+~~ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+~~ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+~~ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+~~ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+~~
+
+Prefix configuration
+
+  A PrefixConfig gives PrefixedProperties an hint which prefixes are valid for a specific environment and which are not.
+  PrefixConfigs prevent PrefixedProperties from "learning" new prefixes on the fly. Well there is one excuse but that will be discussed later on.
+  
+  First of all a PrefixConfig is more or less a list of possible prefixes of an environment. For example The StagingPrefixConfig class is a predefined configuration for "local", "development", "test", "integration", "qa", "prelive", "live" environment.
+
+  To create your own StageConfig you might just create a subclass of DefaultPrefixConfig and set all prefixes within the constructor.\
+  The following example will show you a PrefixConfig for three services. You can use a PrefixConfig on standalone basis or use it for cascading prefixes.
+  
++--------------------------------------------------------------------------------------------------------------------------+
+
+	public class ServicePrefixConfig extends DefaultPrefixConfig {
+	
+	    private static final long serialVersionUID = 1L;
+	    public final static String PRODUCT_SRV = "prdsrv";
+	    public final static String ACCOUNTING_SRV = "accsrv";
+	    public final static String DELIVERY_SRV = "delsrv";
+	
+	    private final static String[] SERVICES = { PRODUCT_SRV, ACCOUNTING_SRV, DELIVERY_SRV };
+	
+	    public ServicePrefixConfig() {
+	        super(ServicePrefixConfig.SERVICES);
+	    }
+	
+		/** Will set the defaultConfig for this environment */
+	    public ServicePrefixConfig(final String prefix) {
+	        super(ServicePrefixConfig.SERVICES, prefix);
+	    }
+	
+	}
+
++--------------------------------------------------------------------------------------------------------------------------+
+
+  Use the PrefixConfig just like a normal prefixConfiguration:
+  
++------------------------------------------------------------------------------------------------------------------------+
+
+  PrefixedProperties properties = new PrefixedProperties( new ServicePrefixConfig("prdsrv") );
+
++------------------------------------------------------------------------------------------------------------------------+
+
+  or set the PrefixConfig afterwards:
+
++----------------------------------------------------------------------------------------------------------------------------------------------------------+
+
+  PrefixedProperties properties = new PrefixedProperties();
+  properties.setPrefixConfig( new ServicePrefixConfig("prdsrv") ); //this will remove a prior set PrefixConfig and also the configured prefix.
+
++----------------------------------------------------------------------------------------------------------------------------------------------------------+
+
+PrefixConfig and cascading environments
+
+  With PrefixConfigs it is also possible to use cascading environments a sub-environment could be a department or group, hosts, services, components, users and many more.
+   
+  A cascading prefixed property could look like: <<stage.department.group.host.service.component.key=someValue>>\ 
+  and you could also define defaults by excluding prefixes: <<department.service.key=somedefaultValue>>, <<group.key=another default>>\
+  The most specific key will be returned.
+  
+  To define cascading PrefixedProperties with PrefixConfigs you can do it in the following way:
+  
++----------------------------------------------------------------------------------------------------------------------------------------------------------+
+  
+  PrefixedProperties properties = PrefixedProperties.createCascadingPrefixProperties(new StagingPrefixConfig("test"), new ServicePrefixConfig("prdsrv"));
+  
++----------------------------------------------------------------------------------------------------------------------------------------------------------+
+  
+  To change the configuration you can now use the setDefaultPrefix in the following ways:
+
++----------------------------------------------------------------------------------------------------------------------------------------------------------+
+  
+  properties.setDefaultPrefix("liv"); //changes from test to live
+  properties.setDefaultPrefix("delsrv"); //changes from production service to delivery service
+  properties.setDefaultPrefix("qa.accsrv"); //changes to quality assurance and accounting service
+  
++----------------------------------------------------------------------------------------------------------------------------------------------------------+
+ 
+  You can also combine the "learning" feature and PrefixConfigurations. For that you can use the DynamicPrefixConfig together with other prefix configurations.
+  
++----------------------------------------------------------------------------------------------------------------------------------------------------------+
+  
+  PrefixedProperties properties = PrefixedProperties.createCascadingPrefixProperties(new StagingPrefixConfig("test"), 
+    new ServicePrefixConfig("prdsrv"), new DynamicPrefixConfig() );
+  properties.setDefaultPrefix("qa.accsrv.dynamic");
+  
++----------------------------------------------------------------------------------------------------------------------------------------------------------+
+
+  Another example with property retrieval:
+ 
++--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+  
+  //ServicePrefixConfig consists of deliverysrv, accountingsrv, productsrv
+  //ComponentPrefixConfig consists of database
+  PrefixedProperties properties = PrefixedProperties.createCascadingPrefixProperties(new StagingPrefixConfig(), new ServicePrefixConfig(), new ComponentPrefixConfig());
+  //setup the properties
+  properties.setConfiguredPrefix("liv.deliverysrv.database);
+  properties.setProperty("liv.connections", "10");
+  properties.setProperty("liv.deliverysrv.database.connections", "20");
+  properties.setProperty("accountingsrv.connections", "30");//will work for all stages
+  
+  properties.get("connections"); //will return 20
+  properties.setConfiguredPrefix("productsrv");//just changes the service configuration not the stage or component
+  properties.get("connections"); //will return 10 by using the liv.connections fallback
+  properties.setConfiguredPrefix("accountingsrv");//changes the service configuration again.
+  properties.get("connections"); //will return 30
+  
++--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+ 
+Clearance of PrefixedConfig
+
+   To change or reset the prefixConfig you can use the * sign to clear all configuredPrefixes or defaultPrefixes. 
+
+   Clearing the configuredPrefixes will make all requests for an property fallback to the defaultPrefixes. You can do that via the PrefixConfig itself by calling setPrefix(String prefix),
+   or use the setConfiguredPrefix(String) on the PrefixedProperties class.
+   If you use cascading properties like in the example above, you can use setConfiguredPrefix("..") to remove all three configured prefixes from the PrefixConfigs.
+   Or setConfiguredPrefix("test..") to set the first config to test and clear the other two configs. 
+   To clear all configurations you can also use setConfiguredPrefix("*") as a shortcut. Please note that the wildcard can be used as a standalone only don't try to mix it up like setConfiguredPrefix("test.*") it wouldn't work.
+   
+   The same mechanism works for clearing the defaults. Either by using ConfiguredPrefix directly or use setDefaultPrefix(String)
+   
+         
+   

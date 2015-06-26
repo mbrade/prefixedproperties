@@ -1,0 +1,62 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>net.sf.prefixedproperties</groupId>
+		<artifactId>prefixedproperties</artifactId>
+		<version>3.0.0-SNAPSHOT</version>
+	</parent>
+	<artifactId>pp-core</artifactId>
+	<packaging>jar</packaging>
+
+	<name>PrefixedProperties-Core</name>
+	<description>Extended Properties class to filter properties by an environment, system, host, user or a combination of them.
+Supports request depended propeties.
+Use XML, Properties or JSON to write your configuration. Supports Spring as PropertyPlaceholderConfigurer or PropertyOverrideConfigurer.
+Use Resourcebundles on a environmental or user specific level.</description>
+
+	<properties>
+		<main.basedir>${project.parent.basedir}</main.basedir>
+	</properties>
+	
+	<dependencies>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>2.5</version>
+		</dependency>	
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-core-lgpl</artifactId>
+			<version>[1.6.1,)</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.16</version>
+		</dependency>		
+		<dependency>
+			<groupId>net.sf.triemap</groupId>
+			<artifactId>triemap</artifactId>
+			<version>1.0.1</version>
+		</dependency>		
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.7</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+	<build>
+		<resources>
+			<resource>
+				<directory>./..</directory>
+				<includes>
+					<include>LICENSE.txt</include>
+				</includes>
+				<targetPath>META-INF</targetPath>
+			</resource>
+		</resources>
+		</build>
+</project>

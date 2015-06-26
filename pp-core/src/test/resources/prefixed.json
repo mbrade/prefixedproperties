@@ -1,0 +1,29 @@
+{
+	"prop4" : "property4",
+	"prop5" : "property5",
+	"test" : {
+		"prop5" : "property5 in environment test",
+		"prdsrv" : {
+			"prop1" : "property1 of service1 in environment test",
+			"prop2" : "property2 of service1 in environment test"
+		},
+		"accsrv" : {
+			"prop1" : "property1 of service2 in environment test",
+			"prop2" : "property2 of service2 in environment test"
+		},
+		"prop3" : "property3 of test"
+	},
+	"prdsrv" : {
+		"prop3" : "property3 of service1"
+	},
+	"accsrv" : {
+		"prop3" : "property3 of service2"
+	},
+	"stg" : {
+		"prdsrv" : {
+			"cache" : {
+				"size" : "5"
+			}
+		}
+	}
+}

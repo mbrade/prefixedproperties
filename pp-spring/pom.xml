@@ -1,0 +1,60 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>net.sf.prefixedproperties</groupId>
+		<artifactId>prefixedproperties</artifactId>
+		<version>3.0.0-SNAPSHOT</version>
+	</parent>
+	<artifactId>pp-spring</artifactId>
+	<packaging>jar</packaging>
+
+	<name>PrefixedProperties-Spring</name>
+	<description>Extended Properties class to filter properties by an environment, system, host, user or a combination of them.
+Supports request depended propeties.
+Use XML, Properties or JSON to write your configuration. Supports Spring as PropertyPlaceholderConfigurer or PropertyOverrideConfigurer.
+Use Resourcebundles on a environmental or user specific level.</description>
+
+	<properties>
+		<spring-version>4.1.4.RELEASE</spring-version>
+		<main.basedir>${project.parent.basedir}</main.basedir>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>net.sf.prefixedproperties</groupId>
+			<artifactId>pp-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.7</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${spring-version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aop</artifactId>
+			<version>${spring-version}</version>
+			<type>jar</type>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+	<build>
+		<resources>
+			<resource>
+				<directory>./..</directory>
+				<includes>
+					<include>LICENSE.txt</include>
+				</includes>
+				<targetPath>META-INF</targetPath>
+			</resource>
+		</resources>
+		</build>
+</project>
