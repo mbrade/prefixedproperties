@@ -23,6 +23,7 @@
 ~~ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 ~~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ~~
+
 Spring and PrefixedProperties
 
   Spring is the leading IOC-container and with the PropertiesPlaceHolder and the PropertyOverrideConfigurer it is easy to use Properties within the Spring Context.

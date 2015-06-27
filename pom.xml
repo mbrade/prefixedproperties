@@ -80,26 +80,9 @@ Use Resourcebundles on a environmental or user specific level.</description>
 		      </configuration>
 		    </plugin>		
 			<plugin>
-				<groupId>com.github.github</groupId>
-				<artifactId>site-maven-plugin</artifactId>
-				<version>0.12</version>
-				<configuration>
-					<message>Building site for ${project.version}</message>
-					<server>github</server>
-				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>site</goal>
-						</goals>
-						<phase>site</phase>
-					</execution>
-				</executions>
-			</plugin>	
-			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-site-plugin</artifactId>
-				<version>3.0</version>
+				<version>3.0</version> <inherited>false</inherited>
 				<configuration>
 					<reportPlugins>
 						<plugin>
@@ -232,6 +215,24 @@ Use Resourcebundles on a environmental or user specific level.</description>
 						</plugin>
 					</reportPlugins>
 				</configuration>
+			</plugin>
+				<plugin>
+				<groupId>com.github.github</groupId>
+				<artifactId>site-maven-plugin</artifactId>
+				<version>0.12</version>
+				<configuration>
+					<message>Building site for ${project.version}</message>
+					<server>github.com</server>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>site</goal>
+						</goals>
+						<phase>site</phase>
+					</execution>
+				</executions>
+				<inherited>false</inherited>
 			</plugin>	
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -309,7 +310,7 @@ Use Resourcebundles on a environmental or user specific level.</description>
 					</execution>
 				</executions>
 				<inherited>false</inherited>
-			</plugin>
+			</plugin><!-- 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
@@ -327,7 +328,7 @@ Use Resourcebundles on a environmental or user specific level.</description>
 						</manifestEntries>
 					</archive>
 				</configuration>
-			</plugin>
+			</plugin>-->
 		    <plugin>
 		      <groupId>org.apache.maven.plugins</groupId>
 		      <artifactId>maven-gpg-plugin</artifactId>
@@ -387,12 +388,12 @@ Use Resourcebundles on a environmental or user specific level.</description>
 				<version>2.5</version>
 				<configuration>
 					<encoding>${encoding}</encoding>
-					<configLocation>${basedir}/src/etc/checkstyle.xml</configLocation>
+					<configLocation>${main.basedir}/src/etc/checkstyle.xml</configLocation>
 					<enableRulesSummary>false</enableRulesSummary>
 					<fork>true</fork>
 					<meminitial>128m</meminitial>
-					<maxmem>512m</maxmem>
-				</configuration>
+					<maxmem>512m</maxmem>					
+				</configuration>				
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

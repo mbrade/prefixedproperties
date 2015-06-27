@@ -52,7 +52,6 @@
       <item name="Spring and PrefixedProperties" href="spring.html"/>
       <item name="Prefixed ResourceBundle" href="bundle.html"/>
       <item name="Maven Dependency" href="dependency.html"/>
-      <item name="Download" href="http://sourceforge.net/projects/prefproperties/"/>
     </menu>
     <menu ref="reports"/>
   </body>

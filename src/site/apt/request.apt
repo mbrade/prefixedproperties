@@ -23,6 +23,7 @@
 ~~ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 ~~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ~~
+
 Request depended properties
 
   PrefixedProperties can filter properties by an environment and use Fallbacks. But what if you have properties that are request depended. Lets say you have a webservice and you want to have different behaviors per user. With PrefixedProperties you have the possibility to change the prefix configuration per request.
