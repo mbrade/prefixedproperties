@@ -25,7 +25,7 @@ Use Resourcebundles on a environmental or user specific level.</description>
 
 	<issueManagement>
 		<url>https://github.com/mbrade/prefixedproperties/issues</url>
-		<system>GitHub Issues</system>
+		<system>GitHub</system>
 	</issueManagement>
 
 	<scm>
@@ -111,6 +111,18 @@ Use Resourcebundles on a environmental or user specific level.</description>
 								<dependencyLocationsEnabled>true</dependencyLocationsEnabled>
 							</configuration>
 						</plugin>
+						<plugin>
+					        <groupId>org.apache.maven.plugins</groupId>
+					        <artifactId>maven-changes-plugin</artifactId>
+					        <version>2.11</version>
+					        <reportSets>
+					          <reportSet>
+					            <reports>
+					               <report>github-report</report>
+					            </reports>
+					          </reportSet>
+					        </reportSets>
+				      	</plugin>						
 						<plugin>
 							<groupId>org.codehaus.mojo</groupId>
 							<artifactId>findbugs-maven-plugin</artifactId>
@@ -262,8 +274,9 @@ Use Resourcebundles on a environmental or user specific level.</description>
 				<configuration>
 					<excludes>
 						<exclude>**/*.json</exclude>
+						<exclude>**/header.txt</exclude>
 					</excludes>
-					<basedir>${main.basedir}</basedir>
+					<basedir>${basedir}</basedir>
 					<header>file:${main.basedir}/src/etc/header.txt</header>
 					<quiet>false</quiet>
 					<failIfMissing>false</failIfMissing>
@@ -279,7 +292,7 @@ Use Resourcebundles on a environmental or user specific level.</description>
 						<project.name>${project.name}</project.name>
 						<license>${project.licenses[0].license.name}</license>
 						<license.url>${project.licenses[0].license.name}</license.url>
-						<developer.name>${project.developers[0].name}</developer.name>
+						<developer>${project.developers[0].name}</developer>
 					</properties>
 					<encoding>${encoding}</encoding>
 					<headerDefinitions>
@@ -295,6 +308,7 @@ Use Resourcebundles on a environmental or user specific level.</description>
 						</goals>
 					</execution>
 				</executions>
+				<inherited>false</inherited>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

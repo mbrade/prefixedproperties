@@ -2,13 +2,101 @@
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/xsd/changes-1.0.0.xsd">
   <properties>
-    <title>Prefixed Properties</title>
+    <title>Prefixed Properties Changes</title>
     <author>Marco Brade</author>
   </properties>
   <body>
-    <release version="0.8.1" date="2010-11-27" description="First release">
+  	<release version="3.0.0" date="2015-06-27" description="Added support for Spring 4.1.x">
+      <action dev="mbrade" type="update">
+        Changed way on how to process properties within Spring.
+        Removed usage of deprecated classes from Spring project.
+        Divided project into different modules.
+        Moving project to GitHub
+      </action>
+    </release>
+	<release version="2.1.0" date="2011-10-24" description="Added function to process other Properties within a Spring context.">
+      <action dev="mbrade" type="add">
+        Added function to process other Properties within a Spring context.
+        Added assembly to build a zip container.
+      </action>
+    </release>
+	<release version="2.0.0" date="2011-03-13" description="Added documentation. Externalized TrieMap into seperate project.">
+      <action dev="mbrade" type="update">
+        Added more documentation
+        Changed the site structure
+        Fixed deserialization bug
+      </action>
+      <action dev="mbrade" type="remove">
+      	Externalized TrieMap into a separate project. net.sf.TrieMap
+      </action>
+    </release>
+	<release version="1.1.3" date="2010-12-09" description="Fixed load of JSON format">
+      <action dev="mbrade" type="update">
+        Fix for JSON format handling
+      </action>
+    </release>
+  	<release version="1.1.2" date="2010-12-07" description="Added documentation">
+      <action dev="mbrade" type="add">
+        Added more documentation
+      </action>
+    </release>
+  	<release version="1.1.1" date="2010-12-07" description="Deploying artefacts to OSS Sonatype">
+      <action dev="mbrade" type="update">
+        Changed configuration of deployments
+      </action>
+    </release>
+  	<release version="1.1.0" date="2010-12-06" description="Added EnvironmentFactory and PrefixedPropertyResourceBundle">
+      <action dev="mbrade" type="add">
+        Added EnvironmentFactory to choose prefix.
+        Added PrefixedPropertyResourceBundle to support Prefixed-Resources together with different localized files.
+      </action>
+      <action dev="mbrade" type="update">
+        Added support for EnvironmentFactory within PrefixedPropertiesOverrideConfigurer
+      </action>
+    </release>
+    <release version="1.0.0" date="2010-12-05" description="Added more JUnit tests and documentation">
+      <action dev="mbrade" type="update">
+        Added support for JSON files as an alternative for XML or Properties.
+      </action>
+      <action dev="mbrade" type="add">
+        Added PrefixedPropertyPersister to enhance loading and storing Properties in JSON Format within Spring.
+        Added JUnit tests.
+        Added Javadoc and APT sites
+      </action>
+    </release>
+    <release version="0.11.0" date="2010-12-02" description="Added Spring support to use PrefixedProperties as PropertyPlaceholder source">
+      <action dev="mbrade" type="update">
+        Added support for JSON files as an alternative for XML or Properties.
+      </action>
+      <action dev="mbrade" type="add">
+        Added PropertyPlaceHolderConfigurer and BeanOverridePropertyPlaceHolder to support PrefixedProperties together with Spring  	
+      </action>
+    </release>
+    <release version="0.10.0" date="2010-11-29" description="Changed threadsafety from synchronized to java locks">
+      <action dev="mbrade" type="update">
+        Changed threadsafety from synchronized to java locks
+      </action>
+      <action dev="mbrade" type="add">
+        Added license header and text   	
+      </action>
+    </release>
+    <release version="0.9.0" date="2010-11-27" description="Using TrieMap, Added dynamic prefix configurations">
+      <action dev="mbrade" type="update">
+        Renamed from StagingProperties to PrefixedProperties
+      </action>
+      <action dev="mbrade" type="add">
+        Using TrieMap for smaller Footprint.
+        Added dynamic prefix configurations      	
+      </action>
+    </release>
+    <release version="0.8.1" date="2010-11-27" description="Added sites">
       <action dev="mbrade" type="update">
         Added site informations.
+      </action>
+    </release>
+    <release version="0.8.0" date="2010-11-26" description="First release">
+      <action dev="mbrade" type="update">
+        Initial release
       </action>
     </release>
   </body>
