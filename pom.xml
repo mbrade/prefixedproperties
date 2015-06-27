@@ -10,8 +10,9 @@
 	<description>Extended Properties class to filter properties by an environment, system, host, user or a combination of them.
 Supports request depended propeties.
 Use XML, Properties or JSON to write your configuration. Supports Spring as PropertyPlaceholderConfigurer or PropertyOverrideConfigurer.
-Use Resourcebundles on a environmental or user specific level.</description>
-	<url>http://prefproperties.sourceforge.net</url>
+Use Resourcebundles on a environmental or user specific level.
+	</description>
+	<url>http://mbrade.github.io/prefixedproperties</url>
 	<inceptionYear>2010</inceptionYear>
 	<licenses>
 		<license>
@@ -244,6 +245,7 @@ Use Resourcebundles on a environmental or user specific level.</description>
 						<git>jgit</git>
 					</providerImplementations>
 				</configuration>
+				<goals>deploy site-deploy</goals>
 				<dependencies>
 					<dependency>
 						<groupId>org.apache.maven.scm</groupId>
