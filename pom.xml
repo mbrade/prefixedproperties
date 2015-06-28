@@ -97,9 +97,6 @@ Use Resourcebundles on a environmental or user specific level.
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-site-plugin</artifactId>
 				<version>3.1</version>
-				<configuration>
-					<skipDeploy>true</skipDeploy>
-				</configuration>
 				<executions>
 					<execution>
 						<id>default</id>
@@ -120,6 +117,7 @@ Use Resourcebundles on a environmental or user specific level.
 							<stagingDirectory>${main.basedir}/target/staging</stagingDirectory>
 							<skipDeploy>false</skipDeploy>							
 						</configuration>
+						<phase>site</phase>
 					</execution>
 				</executions>
 				<inherited>true</inherited>
