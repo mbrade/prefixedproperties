@@ -98,23 +98,17 @@ Use Resourcebundles on a environmental or user specific level.
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-site-plugin</artifactId>
 				<version>3.1</version>
+				<configuration>
+					<skipDeploy>true</skipDeploy>
+				</configuration>
 				<executions>
 					<execution>
 						<goals>
 							<goal>site</goal>
-						</goals>
-						<configuration>
-							<skipDeploy>true</skipDeploy>
-						</configuration>
-						<phase>site</phase>
-					</execution>
-					<execution>
-						<id>Stage-Site</id>
-						<goals>
 							<goal>stage</goal>
 						</goals>
 						<configuration>
-							<skipDeploy>true</skipDeploy>
+							<siteDirectory>${project.baseUri}</siteDirectory>
 							<stagingDirectory>${main.basedir}/target/staging</stagingDirectory>
 						</configuration>
 						<phase>site</phase>
