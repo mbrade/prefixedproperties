@@ -145,10 +145,9 @@ Use Resourcebundles on a environmental or user specific level.
 					<providerImplementations>
 						<git>jgit</git>
 					</providerImplementations>
+					<preparationGoals>site site-deploy</preparationGoals>
+					<goals>deploy</goals>
 				</configuration>
-				<goals>
-					deploy site site-deploy
-				</goals>
 				<dependencies>
 					<dependency>
 						<groupId>org.apache.maven.scm</groupId>
