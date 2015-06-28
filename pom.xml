@@ -123,14 +123,8 @@ Use Resourcebundles on a environmental or user specific level.
 					<message>Building site for ${project.version}</message>
 					<server>github.com</server>
 					<merge>false</merge>
-<!--  					<includes>
-						<include>${main.basedir}/target/staging/*/**</include>
-					</includes>
-					<excludes>
-						<exclude>${main.basedir}/target/site</exclude>
-					</excludes>	 -->
 					<outputDirectory>${main.basedir}/target/staging</outputDirectory>
-					<path>${project.version}</path>				
+					<!-- <path>${project.version}</path>	 -->			
 				</configuration>
 				<executions>
 					<execution>
