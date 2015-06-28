@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>net.sf.prefixedproperties</groupId>
@@ -32,8 +33,8 @@ Use Resourcebundles on a environmental or user specific level.
 		<connection>scm:git:https://github.com/mbrade/prefixedproperties.git</connection>
 		<developerConnection>scm:git:https://github.com/mbrade/prefixedproperties.git</developerConnection>
 		<url>https://github.com/mbrade/prefixedproperties</url>
-	  <tag>HEAD</tag>
-  </scm>
+		<tag>HEAD</tag>
+	</scm>
 
 	<properties>
 		<project.build.sourceEncoding>${encoding}</project.build.sourceEncoding>
@@ -42,17 +43,24 @@ Use Resourcebundles on a environmental or user specific level.
 		<java.version>1.6</java.version>
 		<encoding>UTF-8</encoding>
 		<main.basedir>${project.basedir}</main.basedir>
+		<site.basedir>${project.basedir}</site.basedir>
 	</properties>
-	
+
 	<distributionManagement>
-	  <snapshotRepository>
-	    <id>oss-nexus-snapshots</id>
-	    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-	  </snapshotRepository>
-	  <repository>
-	    <id>oss-nexus-releases</id>
-	    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-	  </repository>
+		<snapshotRepository>
+			<id>oss-nexus-snapshots</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</snapshotRepository>
+		<repository>
+			<id>oss-nexus-releases</id>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+		</repository>
+		<site>
+			<id>github.com</id>
+			<name>Deployment through GitHub's site deployment plugin</name>
+			<url>http://github.com/mbrade/prefixedproperties.gitsite</url>
+			<!-- <url>${project.baseUri}</url> -->
+		</site>
 	</distributionManagement>
 
 	<developers>
@@ -69,172 +77,71 @@ Use Resourcebundles on a environmental or user specific level.
 
 	<build>
 		<plugins>
-		    <plugin>
-		      <groupId>org.sonatype.plugins</groupId>
-		      <artifactId>nexus-staging-maven-plugin</artifactId>
-		      <version>1.6.3</version>
-		      <extensions>true</extensions>
-		      <configuration>
-		        <serverId>oss-nexus-releases</serverId>
-		        <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-		        <autoReleaseAfterClose>true</autoReleaseAfterClose>
-		      </configuration>
-		    </plugin>		
+			<!-- <plugin> <artifactId>maven-resources-plugin</artifactId> <version>2.5</version> 
+				<executions> <execution> <id>copy-sitedescriptor</id> <phase>pre-site</phase> 
+				<goals> <goal>copy-resources</goal> </goals> <configuration> <outputDirectory>${basedir}/src/site/</outputDirectory> 
+				<resources> <resource> <directory>${main.basedir}/src/site/</directory> <includes> 
+				<include>**/site.xml</include> </includes> </resource> </resources> </configuration> 
+				</execution> </executions> </plugin> -->
+			<plugin>
+				<groupId>org.sonatype.plugins</groupId>
+				<artifactId>nexus-staging-maven-plugin</artifactId>
+				<version>1.6.3</version>
+				<extensions>true</extensions>
+				<configuration>
+					<serverId>oss-nexus-releases</serverId>
+					<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+					<autoReleaseAfterClose>false</autoReleaseAfterClose>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-site-plugin</artifactId>
-				<version>3.0</version> <inherited>false</inherited>
+				<version>3.1</version>
 				<configuration>
-					<reportPlugins>
-						<plugin>
-							<groupId>org.apache.maven.plugins</groupId>
-							<artifactId>maven-project-info-reports-plugin</artifactId>
-							<version>2.2</version>
-							<configuration>
-								<dependencyDetailsEnabled>true</dependencyDetailsEnabled>
-								<dependencyLocationsEnabled>true</dependencyLocationsEnabled>
-							</configuration>
-						</plugin>
-						<plugin>
-					        <groupId>org.apache.maven.plugins</groupId>
-					        <artifactId>maven-changes-plugin</artifactId>
-					        <version>2.11</version>
-					        <reportSets>
-					          <reportSet>
-					            <reports>
-					               <report>github-report</report>
-					            </reports>
-					          </reportSet>
-					        </reportSets>
-				      	</plugin>						
-						<plugin>
-							<groupId>org.codehaus.mojo</groupId>
-							<artifactId>findbugs-maven-plugin</artifactId>
-							<version>2.3.1</version>
-							<configuration>
-								<maxHeap>512</maxHeap>
-								<fork>true</fork>
-								<outputEncoding>${encoding}</outputEncoding>
-								<xmlOutput>true</xmlOutput>
-								<!-- Optional derectory to put findbugs xdoc xml report -->
-								<findbugsXmlOutput>true</findbugsXmlOutput>
-								<findbugsXmlOutputDirectory>target/site</findbugsXmlOutputDirectory>
-							</configuration>
-						</plugin>
-						<plugin>
-							<groupId>org.codehaus.mojo</groupId>
-							<artifactId>cobertura-maven-plugin</artifactId>
-							<version>2.4</version>
-							<configuration>
-								<check>
-									<branchRate>75</branchRate>
-									<lineRate>75</lineRate>
-									<haltOnFailure>false</haltOnFailure>
-									<totalBranchRate>75</totalBranchRate>
-									<totalLineRate>75</totalLineRate>
-									<packageLineRate>75</packageLineRate>
-									<packageBranchRate>75</packageBranchRate>
-								</check>
-								<formats>
-									<format>html</format>
-									<format>xml</format>
-								</formats>
-							</configuration>
-						</plugin>
-						<plugin>
-							<groupId>org.apache.maven.plugins</groupId>
-							<artifactId>maven-checkstyle-plugin</artifactId>
-							<version>2.5</version>
-							<configuration>
-								<encoding>${encoding}</encoding>
-								<configLocation>${basedir}/src/etc/checkstyle.xml</configLocation>
-								<enableRulesSummary>false</enableRulesSummary>
-								<fork>true</fork>
-								<meminitial>128m</meminitial>
-								<maxmem>512m</maxmem>
-							</configuration>
-						</plugin>
-						<plugin>
-							<groupId>org.apache.maven.plugins</groupId>
-							<artifactId>maven-javadoc-plugin</artifactId>
-							<version>2.7</version>
-							<reportSets>
-								<reportSet>
-									<id>non-aggregate</id>
-									<configuration>
-										<includeDependencySources>false</includeDependencySources>
-										<javaApiLinks>
-											<property>
-												<name>api_${java.version}</name>
-												<value>http://download.oracle.com/javase/6/docs/api/</value>
-											</property>
-											<property>
-												<name>spring</name>
-												<value>http://static.springsource.org/spring/docs/2.5.x/api</value>
-											</property>
-										</javaApiLinks>
-									</configuration>
-									<reports>
-										<report>javadoc</report>
-									</reports>
-								</reportSet>
-							</reportSets>
-						</plugin>
-						<plugin>
-							<artifactId>maven-pmd-plugin</artifactId>
-							<version>2.5</version>
-							<configuration>
-								<linkXref>false</linkXref>
-								<sourceEncoding>${encoding}</sourceEncoding>
-								<minimumTokens>100</minimumTokens>
-								<targetJdk>${java.version}</targetJdk>
-							</configuration>
-							<reportSets>
-								<reportSet>
-									<reports>
-										<report>pmd</report>
-										<report>cpd</report>
-									</reports>
-								</reportSet>
-							</reportSets>
-						</plugin>
-						<plugin>
-							<groupId>org.apache.maven.plugins</groupId>
-							<artifactId>maven-surefire-plugin</artifactId>
-							<version>2.6</version>
-							<configuration>
-								<includes>
-									<include>**/*Suite.java</include>
-									<include>**/*Test.java</include>
-								</includes>
-								<parallelMavenExecution>true</parallelMavenExecution>
-								<perCoreThreadCount>2</perCoreThreadCount>
-								<forkMode>once</forkMode>
-								<argLine>-Xmx1024m -XX:MaxPermSize=128M</argLine>
-								<aggregate>true</aggregate>
-							</configuration>
-						</plugin>
-					</reportPlugins>
+					<skipDeploy>true</skipDeploy>
 				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>site</goal>
+							<goal>stage</goal>
+						</goals>
+						<configuration>
+							<siteDirectory>${project.baseUri}</siteDirectory>
+						</configuration>
+						<phase>site</phase>
+					</execution>
+				</executions>
+				<inherited>true</inherited>
 			</plugin>
-				<plugin>
+			<plugin>
 				<groupId>com.github.github</groupId>
 				<artifactId>site-maven-plugin</artifactId>
 				<version>0.12</version>
 				<configuration>
 					<message>Building site for ${project.version}</message>
 					<server>github.com</server>
+					<merge>false</merge>
+<!--  					<includes>
+						<include>${main.basedir}/target/staging/*/**</include>
+					</includes>
+					<excludes>
+						<exclude>${main.basedir}/target/site</exclude>
+					</excludes>	 -->
+					<outputDirectory>${main.basedir}/target/stage</outputDirectory>
+					<path>${project.version}</path>				
 				</configuration>
 				<executions>
 					<execution>
 						<goals>
 							<goal>site</goal>
 						</goals>
-						<phase>site</phase>
+						<phase>site-deploy</phase>
 					</execution>
 				</executions>
 				<inherited>false</inherited>
-			</plugin>	
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
@@ -245,7 +152,9 @@ Use Resourcebundles on a environmental or user specific level.
 						<git>jgit</git>
 					</providerImplementations>
 				</configuration>
-				<goals>deploy site-deploy</goals>
+				<goals>
+					deploy site-deploy
+				</goals>
 				<dependencies>
 					<dependency>
 						<groupId>org.apache.maven.scm</groupId>
@@ -312,44 +221,44 @@ Use Resourcebundles on a environmental or user specific level.
 					</execution>
 				</executions>
 				<inherited>false</inherited>
-			</plugin><!-- 
+			</plugin><!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-jar-plugin</artifactId> 
+				<version>2.3.1</version> <configuration> <archive> <index>true</index> <manifest> 
+				<addClasspath>true</addClasspath> </manifest> <manifestEntries> <mode>development</mode> 
+				<url>${project.url}</url> <key>value</key> </manifestEntries> </archive> 
+				</configuration> </plugin> -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.3.1</version>
-				<configuration>
-					<archive>
-						<index>true</index>
-						<manifest>
-							<addClasspath>true</addClasspath>
-						</manifest>
-						<manifestEntries>
-							<mode>development</mode>
-							<url>${project.url}</url>
-							<key>value</key>
-						</manifestEntries>
-					</archive>
-				</configuration>
-			</plugin>-->
-		    <plugin>
-		      <groupId>org.apache.maven.plugins</groupId>
-		      <artifactId>maven-gpg-plugin</artifactId>
-		      <version>1.5</version>
-		      <executions>
-		        <execution>
-		          <id>sign-artifacts</id>
-		          <phase>verify</phase>
-		          <goals>
-		            <goal>sign</goal>
-		          </goals>
-		        </execution>
-		      </executions>
-		    </plugin>			
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>1.5</version>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 
 	<reporting>
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jxr-plugin</artifactId>
+				<version>2.3</version>
+				<reportSets>
+					<reportSet>
+						<id>aggregate</id>
+						<inherited>false</inherited>
+						<reports>
+							<report>aggregate</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>findbugs-maven-plugin</artifactId>
@@ -394,8 +303,8 @@ Use Resourcebundles on a environmental or user specific level.
 					<enableRulesSummary>false</enableRulesSummary>
 					<fork>true</fork>
 					<meminitial>128m</meminitial>
-					<maxmem>512m</maxmem>					
-				</configuration>				
+					<maxmem>512m</maxmem>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -441,6 +350,19 @@ Use Resourcebundles on a environmental or user specific level.
 					</reportSet>
 				</reportSets>
 			</plugin>
+<!-- 
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-changes-plugin</artifactId>
+				<version>2.11</version>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>github-report</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>-->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
@@ -456,6 +378,11 @@ Use Resourcebundles on a environmental or user specific level.
 					<argLine>-Xmx1024m -XX:MaxPermSize=128M</argLine>
 					<aggregate>true</aggregate>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>2.6</version>
 			</plugin>
 		</plugins>
 	</reporting>

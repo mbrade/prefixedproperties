@@ -38,11 +38,10 @@
   <version position="right"/>
   <body>
     <links>
-      <item name="Downloads" href="http://sourceforge.net/projects/prefproperties/" />
-      <item name="Issue Management" href="https://sourceforge.net/tracker/?group_id=355433" />
+      <item name="Issue Management" href="https://github.com/mbrade/prefixedproperties/issues" />
     </links>
 
-    <menu name="Prefixed Properties ">
+    <menu name="Prefixed Properties" inherit="top">
       <item name="Introduction" href="index.html"/>
       <item name="Basic Environments" href="environments.html"/>
       <item name="Fallbacks" href="fallback.html"/>
@@ -53,6 +52,7 @@
       <item name="Prefixed ResourceBundle" href="bundle.html"/>
       <item name="Maven Dependency" href="dependency.html"/>
     </menu>
-    <menu ref="reports"/>
+    <menu name="Sub Modules" ref="modules" inherit="bottom" />
+    <menu ref="reports" inherit="top"/>
   </body>
 </project>
