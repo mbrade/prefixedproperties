@@ -145,7 +145,8 @@ Use Resourcebundles on a environmental or user specific level.
 					<providerImplementations>
 						<git>jgit</git>
 					</providerImplementations>
-					<preparationGoals>compile site site:stage site-deploy</preparationGoals>
+					<preparationGoals>compile test site site:stage</preparationGoals>
+					<completionGoals>site-deploy</completionGoals>
 					<goals>deploy</goals>
 				</configuration>
 				<dependencies>
