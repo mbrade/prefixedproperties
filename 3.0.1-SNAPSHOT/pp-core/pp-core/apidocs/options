@@ -1,0 +1,26 @@
+-classpath
+'C:/WorkspacesNB/PrefixedProperties_GIT/pp-core/target/classes;C:/Users/Marco/.m2/repository/log4j/log4j/1.2.16/log4j-1.2.16.jar;C:/Users/Marco/.m2/repository/commons-lang/commons-lang/2.5/commons-lang-2.5.jar;C:/Users/Marco/.m2/repository/org/codehaus/jackson/jackson-core-lgpl/1.9.13/jackson-core-lgpl-1.9.13.jar;C:/Users/Marco/.m2/repository/net/sf/triemap/triemap/1.0.1/triemap-1.0.1.jar'
+-encoding
+'UTF-8'
+-protected
+-sourcepath
+'C:/WorkspacesNB/PrefixedProperties_GIT/pp-core/src/main/java'
+-author
+-bottom
+'Copyright &#169; 2010-2015. All Rights Reserved.'
+-charset
+'UTF-8'
+-d
+'C:/WorkspacesNB/PrefixedProperties_GIT/pp-core/target/site/apidocs'
+-docencoding
+'UTF-8'
+-doctitle
+'PrefixedProperties-Core 3.0.1-SNAPSHOT API'
+-link
+'http://download.oracle.com/javase/6/docs/api'
+-linkoffline
+'http://mbrade.github.io/prefixedproperties/pp-spring/apidocs' 'C:/WorkspacesNB/PrefixedProperties_GIT/pp-spring/target/site/apidocs'
+-use
+-version
+-windowtitle
+'PrefixedProperties-Core 3.0.1-SNAPSHOT API'
