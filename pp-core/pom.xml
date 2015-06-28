@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>net.sf.prefixedproperties</groupId>
 		<artifactId>prefixedproperties-parent</artifactId>
-		<version>3.0.1</version>
+		<version>3.0.2-SNAPSHOT</version>
 	</parent>
 	<artifactId>pp-core</artifactId>
 	<packaging>jar</packaging>
