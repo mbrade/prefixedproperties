@@ -114,7 +114,7 @@ Use Resourcebundles on a environmental or user specific level.
 							<goal>stage</goal>
 						</goals>
 						<configuration>
-							<skipDeploy>false</skipDeploy>
+							<skipDeploy>true</skipDeploy>
 							<stagingDirectory>${main.basedir}/target/staging</stagingDirectory>
 						</configuration>
 						<phase>site</phase>
