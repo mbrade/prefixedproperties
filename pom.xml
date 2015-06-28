@@ -124,7 +124,7 @@ Use Resourcebundles on a environmental or user specific level.
 					<server>github.com</server>
 					<merge>false</merge>
 					<outputDirectory>${main.basedir}/target/staging</outputDirectory>
-					<!-- <path>${project.version}</path>	 -->			
+					<path>${project.version}</path>				
 				</configuration>
 				<executions>
 					<execution>
