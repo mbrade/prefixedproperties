@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>net.sf.prefixedproperties</groupId>
@@ -103,15 +102,24 @@ Use Resourcebundles on a environmental or user specific level.
 				</configuration>
 				<executions>
 					<execution>
+						<id>default</id>
 						<goals>
 							<goal>site</goal>
+						</goals>
+						<configuration>
+							<skipDeploy>true</skipDeploy>
+						</configuration>
+						<phase>site</phase>
+					</execution>
+					<execution>
+						<id>stage-site</id>
+						<goals>
 							<goal>stage</goal>
 						</goals>
 						<configuration>
-							<siteDirectory>${project.baseUri}</siteDirectory>
 							<stagingDirectory>${main.basedir}/target/staging</stagingDirectory>
+							<skipDeploy>false</skipDeploy>							
 						</configuration>
-						<phase>site</phase>
 					</execution>
 				</executions>
 				<inherited>true</inherited>
