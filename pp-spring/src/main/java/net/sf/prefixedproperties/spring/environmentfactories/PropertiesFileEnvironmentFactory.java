@@ -49,10 +49,20 @@ public class PropertiesFileEnvironmentFactory implements EnvironmentFactory{
 		File file = new File(getFileName());
 		Properties properties = new Properties();
 		if (file.exists() && file.canRead()){
-			try(BufferedInputStream inStream = new BufferedInputStream(new FileInputStream(file))){
+			BufferedInputStream inStream = null;
+			try{
+				inStream = new BufferedInputStream(new FileInputStream(file));
 				properties.load(inStream);
 			}catch(IOException ioe){
 				log.info("Failed to load properties: "+getFileName(), ioe);
+			}finally{
+				if (inStream != null){
+					try {
+						inStream.close();
+					} catch (IOException e) {
+						log.info("Failed to load properties: "+getFileName(), e);
+					}
+				}
 			}
 		}
 		String property = properties.getProperty(getPropertiesKey());

@@ -39,7 +39,8 @@ Use Resourcebundles on a environmental or user specific level.
 		<project.build.sourceEncoding>${encoding}</project.build.sourceEncoding>
 		<license.name>BSD</license.name>
 		<license.url>http://www.freebsd.org/copyright/license.html</license.url>
-		<java.version>1.7</java.version>
+		<java.source.version>1.6</java.source.version>
+		<java.target.version>1.6</java.target.version>
 		<encoding>UTF-8</encoding>
 		<main.basedir>${project.basedir}</main.basedir>
 		<site.basedir>${project.basedir}</site.basedir>
@@ -166,10 +167,10 @@ Use Resourcebundles on a environmental or user specific level.
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
+				<version>3.5.1</version>
 				<configuration>
-					<source>${java.version}</source>
-					<target>${java.version}</target>
+					<source>${java.source.version}</source>
+					<target>${java.target.version}</target>
 				</configuration>
 			</plugin>
 			<plugin>
