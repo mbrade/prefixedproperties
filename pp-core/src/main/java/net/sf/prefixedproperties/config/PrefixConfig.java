@@ -50,7 +50,7 @@ public interface PrefixConfig extends Iterable<String>, Serializable, Cloneable 
 	 * If local prefix is set {@link PrefixedProperties} can decide to call
 	 * {@link #getLocalPrefix()} instead of {@link #getPrefix()}
 	 * 
-	 * @return
+	 * @return check if local prefix has been set.
 	 */
 	boolean containsLocalPrefix();
 
@@ -67,7 +67,7 @@ public interface PrefixConfig extends Iterable<String>, Serializable, Cloneable 
 	 * Gets the local set prefix instead of the default one. This method will
 	 * never fall back to the default prefix.
 	 * 
-	 * @return
+	 * @return the prefix bound to this thread.
 	 */
 	String getLocalPrefix();
 

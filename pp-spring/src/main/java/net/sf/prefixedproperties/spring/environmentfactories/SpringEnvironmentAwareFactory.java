@@ -12,7 +12,7 @@ import net.sf.prefixedproperties.config.PrefixConfig;
 import net.sf.prefixedproperties.spring.EnvironmentFactory;
 
 /**
- * Gets all profiles from the Spring environment and concatenates them with a dot.<br/>
+ * Gets all profiles from the Spring environment and concatenates them with a dot.<br>
  * Per default the default profiles are excluded.
  */
 public class SpringEnvironmentAwareFactory implements EnvironmentFactory, EnvironmentAware {

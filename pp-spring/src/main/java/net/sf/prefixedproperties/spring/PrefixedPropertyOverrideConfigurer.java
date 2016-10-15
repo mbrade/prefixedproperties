@@ -49,9 +49,9 @@ import org.springframework.util.CollectionUtils;
  * The PrefixedPropertyOverrideConfigurer behaves the same as
  * {@link PropertyOverrideConfigurer} with the difference that you can. To
  * configure the default prefix you can use the following methods:
- * {@link #setEnvironmentFactory(EnvironmentFactory)}<br/>
- * {@link #setDefaultPrefixSystemPropertyKey(String)}<br/>
- * {@link #setDefaultPrefix(String)}<br/>
+ * {@link #setEnvironmentFactory(EnvironmentFactory)}<br>
+ * {@link #setDefaultPrefixSystemPropertyKey(String)}<br>
+ * {@link #setDefaultPrefix(String)}<br>
  * The usage of the methods will be in the same order as above.
  */
 @ManagedResource("prefixedproperties:name=PrefixedPropertyOverrideConfigurer")

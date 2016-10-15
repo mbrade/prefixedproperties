@@ -147,7 +147,7 @@ Use Resourcebundles on a environmental or user specific level.
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
-				<version>2.5.1</version>
+				<version>2.5.3</version>
 				<configuration>
 					<autoVersionSubmodules>true</autoVersionSubmodules>
 					<providerImplementations>
@@ -263,7 +263,7 @@ Use Resourcebundles on a environmental or user specific level.
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>findbugs-maven-plugin</artifactId>
-				<version>2.3.1</version>
+				<version>3.0.4</version>
 				<configuration>
 					<maxHeap>512</maxHeap>
 					<fork>true</fork>
@@ -318,7 +318,7 @@ Use Resourcebundles on a environmental or user specific level.
 							<includeDependencySources>false</includeDependencySources>
 							<javaApiLinks>
 								<property>
-									<name>api_${java.version}</name>
+									<name>api_${java.source.version}</name>
 									<value>http://download.oracle.com/javase/6/docs/api/</value>
 								</property>
 								<property>
@@ -340,7 +340,7 @@ Use Resourcebundles on a environmental or user specific level.
 					<linkXref>false</linkXref>
 					<sourceEncoding>${encoding}</sourceEncoding>
 					<minimumTokens>100</minimumTokens>
-					<targetJdk>${java.version}</targetJdk>
+					<targetJdk>${java.source.version}</targetJdk>
 				</configuration>
 				<reportSets>
 					<reportSet>

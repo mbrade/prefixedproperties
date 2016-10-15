@@ -8,8 +8,8 @@ import org.apache.commons.lang.StringUtils;
 import net.sf.prefixedproperties.spring.EnvironmentFactory;
 
 /**
- * Takes the first environment from the given list of EnvironmentFactories which is not null.<br/>
- * The order of the list will be the priority.<br/>
+ * Takes the first environment from the given list of EnvironmentFactories which is not null.<br>
+ * The order of the list will be the priority.<br>
  * 
  * You could build up an cascaded setup where first you look for an property in an properties file, than for an system property and than you use a static one.
  * 

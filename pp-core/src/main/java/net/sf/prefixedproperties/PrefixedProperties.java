@@ -76,9 +76,9 @@ import net.sf.triemap.TrieMap.TrieMapBackedProperties;
  * key-prefix. The environment itself can be configured within this Properties
  * by using {@link #setDefaultPrefix(String)} which is for a global level and
  * also {@link #setLocalPrefix(String)} which is used on a {@link ThreadLocal}
- * basis.<br/>
+ * basis.<br>
  * So it's possible to have a global prefix for everything. And a more specific
- * or totally different prefix on a thread-dependend basis.<br/>
+ * or totally different prefix on a thread-dependend basis.<br>
  * 
  */
 public class PrefixedProperties extends Properties implements Serializable {
@@ -426,10 +426,8 @@ public class PrefixedProperties extends Properties implements Serializable {
 	/**
 	 * Instantiates a new prefixed properties.
 	 * 
-	 * @param props
-	 *            the props
-	 * @param default
-	 *            Prefix the default prefix
+	 * @param props the props
+	 * @param defaultPrefix the default prefix
 	 */
 	public PrefixedProperties(final PrefixedProperties props, final String defaultPrefix) {
 		properties = props;
@@ -720,7 +718,7 @@ public class PrefixedProperties extends Properties implements Serializable {
 	}
 
 	/**
-	 * Gets the prefixed key and parse it to an String[]<br/>
+	 * Gets the prefixed key and parse it to an String[]<br>
 	 * Each comma-separated list can be used.
 	 * 
 	 * @param key
@@ -738,7 +736,7 @@ public class PrefixedProperties extends Properties implements Serializable {
 	}
 
 	/**
-	 * Gets the prefixed key and parse it to an String[]<br/>
+	 * Gets the prefixed key and parse it to an String[]<br>
 	 * Each comma-separated list can be used. If the key couldn't get found, the
 	 * default will be used.
 	 * 
@@ -786,7 +784,7 @@ public class PrefixedProperties extends Properties implements Serializable {
 	}
 
 	/**
-	 * Gets the prefixed key and parse it to an boolean[]<br/>
+	 * Gets the prefixed key and parse it to an boolean[]<br>
 	 * Each comma-separated list can be used.
 	 * 
 	 * @param key
@@ -806,7 +804,7 @@ public class PrefixedProperties extends Properties implements Serializable {
 	}
 
 	/**
-	 * Gets the prefixed key and parse it to an boolean[]<br/>
+	 * Gets the prefixed key and parse it to an boolean[]<br>
 	 * Each comma-separated list can be used. If the key couldn't get found, the
 	 * default will be used.
 	 * 
@@ -939,7 +937,7 @@ public class PrefixedProperties extends Properties implements Serializable {
 	}
 
 	/**
-	 * Gets the prefixed key and parse it to an double[]<br/>
+	 * Gets the prefixed key and parse it to an double[]<br>
 	 * Each comma-separated list can be used.
 	 * 
 	 * @param key
@@ -959,7 +957,7 @@ public class PrefixedProperties extends Properties implements Serializable {
 	}
 
 	/**
-	 * Gets the prefixed key and parse it to an double[]<br/>
+	 * Gets the prefixed key and parse it to an double[]<br>
 	 * Each comma-separated list can be used. If the key couldn't get found, the
 	 * default will be used.
 	 * 
@@ -1028,7 +1026,7 @@ public class PrefixedProperties extends Properties implements Serializable {
 	}
 
 	/**
-	 * Gets the prefixed key and parse it to an float[]<br/>
+	 * Gets the prefixed key and parse it to an float[]<br>
 	 * Each comma-separated list can be used.
 	 * 
 	 * @param key
@@ -1048,7 +1046,7 @@ public class PrefixedProperties extends Properties implements Serializable {
 	}
 
 	/**
-	 * Gets the prefixed key and parse it to an float[]<br/>
+	 * Gets the prefixed key and parse it to an float[]<br>
 	 * Each comma-separated list can be used. If the key couldn't get found, the
 	 * default will be used.
 	 * 
@@ -1103,7 +1101,7 @@ public class PrefixedProperties extends Properties implements Serializable {
 	}
 
 	/**
-	 * Gets the prefixed key and parse it to an int[]<br/>
+	 * Gets the prefixed key and parse it to an int[]<br>
 	 * Each comma-separated list can be used.
 	 * 
 	 * @param key
@@ -1123,7 +1121,7 @@ public class PrefixedProperties extends Properties implements Serializable {
 	}
 
 	/**
-	 * Gets the prefixed key and parse it to an int[]<br/>
+	 * Gets the prefixed key and parse it to an int[]<br>
 	 * Each comma-separated list can be used. If the key couldn't get found, the
 	 * default will be used.
 	 * 
@@ -1199,7 +1197,7 @@ public class PrefixedProperties extends Properties implements Serializable {
 	}
 
 	/**
-	 * Gets the prefixed key and parse it to an long[]<br/>
+	 * Gets the prefixed key and parse it to an long[]<br>
 	 * Each comma-separated list can be used.
 	 * 
 	 * @param key
@@ -1219,7 +1217,7 @@ public class PrefixedProperties extends Properties implements Serializable {
 	}
 
 	/**
-	 * Gets the prefixed key and parse it to an long[]<br/>
+	 * Gets the prefixed key and parse it to an long[]<br>
 	 * Each comma-separated list can be used. If the key couldn't get found, the
 	 * default will be used.
 	 * 
@@ -1318,7 +1316,7 @@ public class PrefixedProperties extends Properties implements Serializable {
 	 * 
 	 * @return the property
 	 * 
-	 * @inheritDoc
+
 	 */
 	@Override
 	public String getProperty(final String key) {
@@ -1349,7 +1347,6 @@ public class PrefixedProperties extends Properties implements Serializable {
 	 * 
 	 * @return the property
 	 * 
-	 * @inheritDoc
 	 */
 	@Override
 	public String getProperty(final String value, final String def) {
@@ -1391,7 +1388,7 @@ public class PrefixedProperties extends Properties implements Serializable {
 	}
 
 	/**
-	 * Gets the prefixed key and parse it to an short[]<br/>
+	 * Gets the prefixed key and parse it to an short[]<br>
 	 * Each comma-separated list can be used.
 	 * 
 	 * @param key
@@ -1411,7 +1408,7 @@ public class PrefixedProperties extends Properties implements Serializable {
 	}
 
 	/**
-	 * Gets the prefixed key and parse it to an short[]<br/>
+	 * Gets the prefixed key and parse it to an short[]<br>
 	 * Each comma-separated list can be used. If the key couldn't get found, the
 	 * default will be used.
 	 * 
@@ -1534,7 +1531,7 @@ public class PrefixedProperties extends Properties implements Serializable {
 	/**
 	 * Checks if there are local prefix configurations existing.
 	 * 
-	 * @return
+	 * @return true/false
 	 */
 	public boolean hasLocalPrefixConfigurations() {
 		return prefixes.containsLocalPrefix() || ((properties instanceof PrefixedProperties)
@@ -1948,8 +1945,8 @@ public class PrefixedProperties extends Properties implements Serializable {
 	 * affect the current thread. You can have a combination of default and
 	 * local prefix.
 	 * 
-	 * @param prefix
-	 *            the new prefix
+	 * @param configuredPrefix
+	 *            the new configuredPrefix
 	 */
 	public void setLocalPrefix(final String configuredPrefix) {
 		lock.writeLock().lock();
@@ -1963,10 +1960,9 @@ public class PrefixedProperties extends Properties implements Serializable {
 	}
 
 	/**
-	 * Setting to define if default prefixes should be mixed with local prefixes
-	 * if local prefixes are not present.
+	 * Setting to define if default prefixes should be mixed with local prefixes if local prefixes are not present.
 	 * 
-	 * @param value
+	 * @param value decide
 	 */
 	public void setMixDefaultAndLocalPrefixSettings(final boolean value) {
 		this.mixDefaultAndLocalPrefixes = value;

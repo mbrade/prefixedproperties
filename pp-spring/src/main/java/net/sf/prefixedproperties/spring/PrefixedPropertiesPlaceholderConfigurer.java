@@ -53,13 +53,13 @@ import org.springframework.util.PropertyPlaceholderHelper;
 /**
  * Works the same as {@link PropertyPlaceholderConfigurer} with the advantage to
  * filter properties by using a specific environment. Mainly it is enough to set
- * the current environment by using {@link #setDefaultPrefix(String)}<br/>
+ * the current environment by using {@link #setDefaultPrefix(String)}<br>
  * For special situation it is also possible that you can use
- * {@link #setPrefixConfigs(List)} to configure the known prefixes.<br/>
+ * {@link #setPrefixConfigs(List)} to configure the known prefixes.<br>
  * To configure the default prefix you can use the following methods:
- * {@link #setEnvironmentFactory(EnvironmentFactory)}<br/>
- * {@link #setDefaultPrefixSystemPropertyKey(String)}<br/>
- * {@link #setDefaultPrefix(String)}<br/>
+ * {@link #setEnvironmentFactory(EnvironmentFactory)}<br>
+ * {@link #setDefaultPrefixSystemPropertyKey(String)}<br>
+ * {@link #setDefaultPrefix(String)}<br>
  * The usage of the methods will be in the same order as above.
  */
 @ManagedResource("prefixedproperties:name=PrefixedPropertiesPlaceholderConfigurer")
@@ -440,9 +440,9 @@ public class PrefixedPropertiesPlaceholderConfigurer extends PropertyPlaceholder
 	 * prefixed properties values and this environment configuration. This is
 	 * usefull in the case that you have to define a set of properties which
 	 * should not get mixed up with other properties but should get environment
-	 * specific values for example Log4j.<br/>
+	 * specific values for example Log4j.<br>
 	 * You can also use {@link PrefixedPropertiesFactoryBean} to load properties
-	 * these properties on there own and have your own environment.<br/>
+	 * these properties on there own and have your own environment.<br>
 	 * Default is false
 	 * 
 	 * @param value
