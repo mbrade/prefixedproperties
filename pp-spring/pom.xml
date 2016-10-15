@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>net.sf.prefixedproperties</groupId>
 		<artifactId>prefixedproperties-parent</artifactId>
-		<version>3.0.3-SNAPSHOT</version>
+		<version>3.1.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>pp-spring</artifactId>
 	<packaging>jar</packaging>
@@ -15,20 +15,20 @@ Use XML, Properties or JSON to write your configuration. Supports Spring as Prop
 Use Resourcebundles on a environmental or user specific level.</description>
 
 	<properties>
-		<spring-version>4.1.4.RELEASE</spring-version>
+		<spring-version>4.3.3.RELEASE</spring-version>
 		<main.basedir>${project.parent.basedir}</main.basedir>
 	</properties>
 
-	<dependencies>
+	<dependencies> 
 		<dependency>
 			<groupId>net.sf.prefixedproperties</groupId>
 			<artifactId>pp-core</artifactId>
-			<version>3.0.3-SNAPSHOT</version>
+			<version>3.1.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.7</version>
+			<version>4.10</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

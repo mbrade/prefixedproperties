@@ -3,7 +3,7 @@
 
 	<groupId>net.sf.prefixedproperties</groupId>
 	<artifactId>prefixedproperties-parent</artifactId>
-	<version>3.0.3-SNAPSHOT</version>
+	<version>3.1.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>PrefixedProperties</name>
@@ -39,7 +39,7 @@ Use Resourcebundles on a environmental or user specific level.
 		<project.build.sourceEncoding>${encoding}</project.build.sourceEncoding>
 		<license.name>BSD</license.name>
 		<license.url>http://www.freebsd.org/copyright/license.html</license.url>
-		<java.version>1.6</java.version>
+		<java.version>1.7</java.version>
 		<encoding>UTF-8</encoding>
 		<main.basedir>${project.basedir}</main.basedir>
 		<site.basedir>${project.basedir}</site.basedir>

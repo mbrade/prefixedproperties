@@ -26,15 +26,17 @@
 package net.sf.prefixedproperties.spring;
 
 /**
- * A factory for creating an environment string, which can be used for {@link PrefixedPropertiesPlaceholderConfigurer} or {@link PrefixedPropertyOverrideConfigurer} to set an environment.
+ * A factory for creating an environment string, which can be used for
+ * {@link PrefixedPropertiesPlaceholderConfigurer} or
+ * {@link PrefixedPropertyOverrideConfigurer} to set an environment.
  */
 public interface EnvironmentFactory {
 
-    /**
-     * Gets the environment.
-     * 
-     * @return the environment
-     */
-    String getEnvironment();
+	/**
+	 * Gets the environment. It's okay to return null.
+	 * 
+	 * @return the environment
+	 */
+	String getEnvironment();
 
 }

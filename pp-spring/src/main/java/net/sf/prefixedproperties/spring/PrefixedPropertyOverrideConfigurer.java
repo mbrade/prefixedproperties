@@ -46,7 +46,9 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.util.CollectionUtils;
 
 /**
- * The PrefixedPropertyOverrideConfigurer behaves the same as {@link PropertyOverrideConfigurer} with the difference that you can. To configure the default prefix you can use the following methods:
+ * The PrefixedPropertyOverrideConfigurer behaves the same as
+ * {@link PropertyOverrideConfigurer} with the difference that you can. To
+ * configure the default prefix you can use the following methods:
  * {@link #setEnvironmentFactory(EnvironmentFactory)}<br/>
  * {@link #setDefaultPrefixSystemPropertyKey(String)}<br/>
  * {@link #setDefaultPrefix(String)}<br/>
@@ -55,299 +57,319 @@ import org.springframework.util.CollectionUtils;
 @ManagedResource("prefixedproperties:name=PrefixedPropertyOverrideConfigurer")
 public class PrefixedPropertyOverrideConfigurer extends PropertyOverrideConfigurer {
 
-    /** The local override. */
-    protected boolean localOverride;
+	/** The local override. */
+	protected boolean localOverride;
 
-    /** The local properties. */
-    protected Properties[] localProperties;
+	/** The local properties. */
+	protected Properties[] localProperties;
 
-    /** The locations. */
-    protected Resource[] locations;
+	/** The locations. */
+	protected Resource[] locations;
 
-    /** The ignore resource not found. */
-    protected boolean ignoreResourceNotFound;
+	/** The ignore resource not found. */
+	protected boolean ignoreResourceNotFound;
 
-    /** The file encoding. */
-    protected String fileEncoding;
+	/** The file encoding. */
+	protected String fileEncoding;
 
-    /** The prefix config list. */
-    protected List<PrefixConfig> prefixConfigList;
+	/** The prefix config list. */
+	protected List<PrefixConfig> prefixConfigList;
 
-    /** The default prefix. */
-    protected String defaultPrefix;
-    private PrefixedProperties myProperties;
-    private final PrefixedPropertiesPersister persister = new PrefixedPropertiesPersister();
+	/** The default prefix. */
+	protected String defaultPrefix;
+	private PrefixedProperties myProperties;
+	private final PrefixedPropertiesPersister persister = new PrefixedPropertiesPersister();
 
-    private String defaultPrefixSystemPropertyKey;
+	private String defaultPrefixSystemPropertyKey;
 
-    protected EnvironmentFactory environmentFactory = null;
+	protected EnvironmentFactory environmentFactory = null;
 
-    private boolean mixDefaultAndLocalPrefixConfigurations = false;
+	private boolean mixDefaultAndLocalPrefixConfigurations = false;
 
-    /**
-     * Creates the properties.
-     * 
-     * @return the prefixed properties
-     */
-    protected synchronized PrefixedProperties createProperties() {
-	if (myProperties == null) {
-	    PrefixedProperties resultProperties = null;
-	    String environment = defaultPrefix;
-	    if (environmentFactory != null) {
-		environment = environmentFactory.getEnvironment();
-	    } else if (defaultPrefixSystemPropertyKey != null) {
-		environment = System.getProperty(defaultPrefixSystemPropertyKey);
-		if (environment == null) {
-		    if (logger.isWarnEnabled()) {
-			logger.warn(String.format("Didn't found system property key to set default prefix: %1s", defaultPrefixSystemPropertyKey));
-		    }
-		}
-	    }
-	    if (prefixConfigList != null) {
-		resultProperties = PrefixedProperties.createCascadingPrefixProperties(prefixConfigList);
-	    } else {
-		if (environment != null) {
-		    resultProperties = PrefixedProperties.createCascadingPrefixProperties(environment);
-		} else {
-		    resultProperties = new PrefixedProperties();
-		}
-	    }
-	    resultProperties.setDefaultPrefix(environment);
-	    if (logger.isInfoEnabled()) {
-		logger.info(String.format("Setting default prefix to: %1s", environment));
-	    }
-	    resultProperties.setMixDefaultAndLocalPrefixSettings(mixDefaultAndLocalPrefixConfigurations);
-	    myProperties = resultProperties;
-	}
-	return myProperties;
-    }
-
-    /**
-     * Gets the effective properties.
-     * 
-     * @return the effective properties
-     */
-    @ManagedAttribute()
-    public List<String> getEffectiveProperties() {
-	final List<String> properties = new LinkedList<String>();
-	for (final String key : myProperties.stringPropertyNames()) {
-	    properties.add(key + "=" + myProperties.get(key));
-	}
-	return properties;
-    }
-
-    /**
-     * Gets the prefixed properties.
-     * 
-     * @return the prefixed properties
-     */
-    public PrefixedProperties getPrefixedProperties() {
-	return myProperties;
-    }
-
-    public boolean isMixDefaultAndLocalPrefixConfigurations() {
-	return mixDefaultAndLocalPrefixConfigurations;
-    }
-
-    /**
-     * Load properties.
-     * 
-     * @param props
-     *            the props
-     * @throws IOException
-     *             Signals that an I/O exception has occurred.
-     */
-    @Override
-    protected void loadProperties(final Properties props) throws IOException {
-	if (locations != null) {
-	    for (int i = 0; i < locations.length; i++) {
-		final Resource location = locations[i];
-		if (logger.isInfoEnabled()) {
-		    logger.info("Loading properties file from " + location);
-		}
-		File file = null;
-		InputStream is = null;
-		try {
-		    try {
-			file = location.getFile();
-			is = new BufferedInputStream(new FileInputStream(file));
-		    } catch (final IOException ie) {//ignore
-		    } finally {
-			if (file == null) {
-			    is = location.getInputStream();
+	/**
+	 * Creates the properties.
+	 * 
+	 * @return the prefixed properties
+	 */
+	protected synchronized PrefixedProperties createProperties() {
+		if (myProperties == null) {
+			PrefixedProperties resultProperties = null;
+			String environment = defaultPrefix;
+			if (environmentFactory != null) {
+				environment = environmentFactory.getEnvironment();
+			} else if (defaultPrefixSystemPropertyKey != null) {
+				environment = System.getProperty(defaultPrefixSystemPropertyKey);
+				if (environment == null) {
+					if (logger.isWarnEnabled()) {
+						logger.warn(String.format("Didn't found system property key to set default prefix: %1s",
+								defaultPrefixSystemPropertyKey));
+					}
+				}
 			}
-		    }
-
-		    if (location.getFilename().toLowerCase().endsWith(Constants.XML_FILE_EXTENSION)) {
-			persister.loadFromXml(props, is);
-		    } else if (location.getFilename().toLowerCase().endsWith(Constants.JSON_FILE_EXTENSION)) {
-			if (fileEncoding != null) {
-			    persister.loadFromJson(props, new InputStreamReader(is, Charset.forName(fileEncoding)));
+			if (prefixConfigList != null) {
+				resultProperties = PrefixedProperties.createCascadingPrefixProperties(prefixConfigList);
 			} else {
-			    persister.loadFromJson(props, is);
+				if (environment != null) {
+					resultProperties = PrefixedProperties.createCascadingPrefixProperties(environment);
+				} else {
+					resultProperties = new PrefixedProperties();
+				}
 			}
-		    } else {
-			if (fileEncoding != null) {
-			    persister.load(props, new InputStreamReader(is, Charset.forName(fileEncoding)));
-			} else {
-			    persister.load(props, is);
+			resultProperties.setDefaultPrefix(environment);
+			if (logger.isInfoEnabled()) {
+				logger.info(String.format("Setting default prefix to: %1s", environment));
 			}
-		    }
-		} catch (final IOException ex) {
-		    if (ignoreResourceNotFound) {
-			if (logger.isWarnEnabled()) {
-			    logger.warn("Could not load properties from " + location + ": " + ex.getMessage());
-			}
-		    } else {
-			throw ex;
-		    }
-		} finally {
-		    if (is != null) {
-			is.close();
-		    }
+			resultProperties.setMixDefaultAndLocalPrefixSettings(mixDefaultAndLocalPrefixConfigurations);
+			myProperties = resultProperties;
 		}
-	    }
-	}
-    }
-
-    /* (non-Javadoc)
-     * @see org.springframework.core.io.support.PropertiesLoaderSupport#mergeProperties()
-     */
-    @Override
-    protected Properties mergeProperties() throws IOException {
-	final PrefixedProperties myProperties = createProperties();
-	if (localOverride) {
-	    loadProperties(myProperties);
+		return myProperties;
 	}
 
-	if (localProperties != null) {
-	    for (int i = 0; i < localProperties.length; i++) {
-		CollectionUtils.mergePropertiesIntoMap(localProperties[i], myProperties);
-	    }
+	/**
+	 * Gets the effective properties.
+	 * 
+	 * @return the effective properties
+	 */
+	@ManagedAttribute()
+	public List<String> getEffectiveProperties() {
+		final List<String> properties = new LinkedList<String>();
+		for (final String key : myProperties.stringPropertyNames()) {
+			properties.add(key + "=" + myProperties.get(key));
+		}
+		return properties;
 	}
 
-	if (!localOverride) {
-	    loadProperties(myProperties);
+	/**
+	 * Gets the prefixed properties.
+	 * 
+	 * @return the prefixed properties
+	 */
+	public PrefixedProperties getPrefixedProperties() {
+		return myProperties;
 	}
 
-	return myProperties;
-    }
+	public boolean isMixDefaultAndLocalPrefixConfigurations() {
+		return mixDefaultAndLocalPrefixConfigurations;
+	}
 
-    /**
-     * Sets the default prefix.
-     * 
-     * @param defaultPrefix
-     *            the new default prefix
-     */
-    public void setDefaultPrefix(final String defaultPrefix) {
-	this.defaultPrefix = defaultPrefix;
-    }
+	/**
+	 * Load properties.
+	 * 
+	 * @param props
+	 *            the props
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	@Override
+	protected void loadProperties(final Properties props) throws IOException {
+		if (locations != null) {
+			for (int i = 0; i < locations.length; i++) {
+				final Resource location = locations[i];
+				if (logger.isInfoEnabled()) {
+					logger.info("Loading properties file from " + location);
+				}
+				File file = null;
+				InputStream is = null;
+				try {
+					try {
+						file = location.getFile();
+						is = new BufferedInputStream(new FileInputStream(file));
+					} catch (final IOException ie) {// ignore
+					} finally {
+						if (file == null) {
+							is = location.getInputStream();
+						}
+					}
 
-    /**
-     * Sets this method to specify a system property to be used as an environment. The value of the property will be used for setting the default prefix.
-     * {@link PrefixedProperties#setDefaultPrefix(String)}
-     * 
-     * @param defaultPrefixSystemPropertyKey
-     *            the new ddefault prefix system property key
-     */
-    public void setDefaultPrefixSystemPropertyKey(final String defaultPrefixSystemPropertyKey) {
-	this.defaultPrefixSystemPropertyKey = defaultPrefixSystemPropertyKey;
-    }
+					if (location.getFilename().toLowerCase().endsWith(Constants.XML_FILE_EXTENSION)) {
+						persister.loadFromXml(props, is);
+					} else if (location.getFilename().toLowerCase().endsWith(Constants.JSON_FILE_EXTENSION)) {
+						if (fileEncoding != null) {
+							persister.loadFromJson(props, new InputStreamReader(is, Charset.forName(fileEncoding)));
+						} else {
+							persister.loadFromJson(props, is);
+						}
+					} else if (location.getFilename().toLowerCase().endsWith(Constants.YAML_FILE_EXTENSION)) {
+						if (fileEncoding != null) {
+							persister.loadFromYAML(props, new InputStreamReader(is, Charset.forName(fileEncoding)));
+						} else {
+							persister.loadFromYAML(props, is);
+						}
+					} else {
+						if (fileEncoding != null) {
+							persister.load(props, new InputStreamReader(is, Charset.forName(fileEncoding)));
+						} else {
+							persister.load(props, is);
+						}
+					}
+				} catch (final IOException ex) {
+					if (ignoreResourceNotFound) {
+						if (logger.isWarnEnabled()) {
+							logger.warn("Could not load properties from " + location + ": " + ex.getMessage());
+						}
+					} else {
+						throw ex;
+					}
+				} finally {
+					if (is != null) {
+						is.close();
+					}
+				}
+			}
+		}
+	}
 
-    /**
-     * Sets the environment factory.
-     * 
-     * @param environmentFactory
-     *            the new environment factory
-     */
-    public void setEnvironmentFactory(final EnvironmentFactory environmentFactory) {
-	this.environmentFactory = environmentFactory;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.springframework.core.io.support.PropertiesLoaderSupport#
+	 * mergeProperties()
+	 */
+	@Override
+	protected Properties mergeProperties() throws IOException {
+		final PrefixedProperties myProperties = createProperties();
+		if (localOverride) {
+			loadProperties(myProperties);
+		}
 
-    /**
-     * Set the encoding to use for parsing properties files.
-     * <p>
-     * Default is none, using the <code>java.util.Properties</code> default encoding.
-     * <p>
-     * Only applies to classic properties files, not to XML files.
-     * 
-     * @param encoding
-     *            the new file encoding
-     * @see org.springframework.util.PropertiesPersister#load
-     */
-    @Override
-    public void setFileEncoding(final String encoding) {
-	fileEncoding = encoding;
-    }
+		if (localProperties != null) {
+			for (int i = 0; i < localProperties.length; i++) {
+				CollectionUtils.mergePropertiesIntoMap(localProperties[i], myProperties);
+			}
+		}
 
-    /**
-     * Set if failure to find the property resource should be ignored.
-     * <p>
-     * "true" is appropriate if the properties file is completely optional. Default is "false".
-     * 
-     * @param ignoreResourceNotFound
-     *            the new ignore resource not found
-     */
-    @Override
-    public void setIgnoreResourceNotFound(final boolean ignoreResourceNotFound) {
-	this.ignoreResourceNotFound = ignoreResourceNotFound;
-    }
+		if (!localOverride) {
+			loadProperties(myProperties);
+		}
 
-    /* (non-Javadoc)
-     * @see org.springframework.core.io.support.PropertiesLoaderSupport#setLocalOverride(boolean)
-     */
-    @Override
-    public void setLocalOverride(final boolean localOverride) {
-	this.localOverride = localOverride;
-    }
+		return myProperties;
+	}
 
-    /**
-     * Set a location of a properties file to be loaded.
-     * <p>
-     * Can point to a classic properties file or to an XML file that follows JDK 1.5's properties XML format.
-     * 
-     * @param location
-     *            the new location
-     */
-    @Override
-    public void setLocation(final Resource location) {
-	locations = new Resource[] { location };
-    }
+	/**
+	 * Sets the default prefix.
+	 * 
+	 * @param defaultPrefix
+	 *            the new default prefix
+	 */
+	public void setDefaultPrefix(final String defaultPrefix) {
+		this.defaultPrefix = defaultPrefix;
+	}
 
-    public void setMixDefaultAndLocalPrefixConfigurations(final boolean mixDefaultAndLocalPrefixConfigurations) {
-	this.mixDefaultAndLocalPrefixConfigurations = mixDefaultAndLocalPrefixConfigurations;
-    }
+	/**
+	 * Sets this method to specify a system property to be used as an
+	 * environment. The value of the property will be used for setting the
+	 * default prefix. {@link PrefixedProperties#setDefaultPrefix(String)}
+	 * 
+	 * @param defaultPrefixSystemPropertyKey
+	 *            the new ddefault prefix system property key
+	 */
+	public void setDefaultPrefixSystemPropertyKey(final String defaultPrefixSystemPropertyKey) {
+		this.defaultPrefixSystemPropertyKey = defaultPrefixSystemPropertyKey;
+	}
 
-    /**
-     * Sets the prefix configs.
-     * 
-     * @param configs
-     *            the new prefix configs
-     */
-    public void setPrefixConfigs(final List<PrefixConfig> configs) {
-	prefixConfigList = configs;
-    }
+	/**
+	 * Sets the environment factory.
+	 * 
+	 * @param environmentFactory
+	 *            the new environment factory
+	 */
+	public void setEnvironmentFactory(final EnvironmentFactory environmentFactory) {
+		this.environmentFactory = environmentFactory;
+	}
 
-    /**
-     * Set local properties, e.g. via the "props" tag in XML bean definitions. These can be considered defaults, to be overridden by properties loaded from files.
-     * 
-     * @param properties
-     *            the new properties
-     */
-    @Override
-    public void setProperties(final Properties properties) {
-	localProperties = new Properties[] { properties };
-    }
+	/**
+	 * Set the encoding to use for parsing properties files.
+	 * <p>
+	 * Default is none, using the <code>java.util.Properties</code> default
+	 * encoding.
+	 * <p>
+	 * Only applies to classic properties files, not to XML files.
+	 * 
+	 * @param encoding
+	 *            the new file encoding
+	 * @see org.springframework.util.PropertiesPersister#load
+	 */
+	@Override
+	public void setFileEncoding(final String encoding) {
+		fileEncoding = encoding;
+	}
 
-    /**
-     * Set local properties, e.g. via the "props" tag in XML bean definitions, allowing for merging multiple properties sets into one.
-     * 
-     * @param propertiesArray
-     *            the new properties array
-     */
-    @Override
-    public void setPropertiesArray(final Properties... propertiesArray) {
-	localProperties = propertiesArray;
-    }
+	/**
+	 * Set if failure to find the property resource should be ignored.
+	 * <p>
+	 * "true" is appropriate if the properties file is completely optional.
+	 * Default is "false".
+	 * 
+	 * @param ignoreResourceNotFound
+	 *            the new ignore resource not found
+	 */
+	@Override
+	public void setIgnoreResourceNotFound(final boolean ignoreResourceNotFound) {
+		this.ignoreResourceNotFound = ignoreResourceNotFound;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.springframework.core.io.support.PropertiesLoaderSupport#
+	 * setLocalOverride(boolean)
+	 */
+	@Override
+	public void setLocalOverride(final boolean localOverride) {
+		this.localOverride = localOverride;
+	}
+
+	/**
+	 * Set a location of a properties file to be loaded.
+	 * <p>
+	 * Can point to a classic properties file or to an XML file that follows JDK
+	 * 1.5's properties XML format.
+	 * 
+	 * @param location
+	 *            the new location
+	 */
+	@Override
+	public void setLocation(final Resource location) {
+		locations = new Resource[] { location };
+	}
+
+	public void setMixDefaultAndLocalPrefixConfigurations(final boolean mixDefaultAndLocalPrefixConfigurations) {
+		this.mixDefaultAndLocalPrefixConfigurations = mixDefaultAndLocalPrefixConfigurations;
+	}
+
+	/**
+	 * Sets the prefix configs.
+	 * 
+	 * @param configs
+	 *            the new prefix configs
+	 */
+	public void setPrefixConfigs(final List<PrefixConfig> configs) {
+		prefixConfigList = configs;
+	}
+
+	/**
+	 * Set local properties, e.g. via the "props" tag in XML bean definitions.
+	 * These can be considered defaults, to be overridden by properties loaded
+	 * from files.
+	 * 
+	 * @param properties
+	 *            the new properties
+	 */
+	@Override
+	public void setProperties(final Properties properties) {
+		localProperties = new Properties[] { properties };
+	}
+
+	/**
+	 * Set local properties, e.g. via the "props" tag in XML bean definitions,
+	 * allowing for merging multiple properties sets into one.
+	 * 
+	 * @param propertiesArray
+	 *            the new properties array
+	 */
+	@Override
+	public void setPropertiesArray(final Properties... propertiesArray) {
+		localProperties = propertiesArray;
+	}
 
 }
