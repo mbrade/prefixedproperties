@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd version="4.2.5" timestamp="2016-10-15T22:59:24.125">
+<file name="C:\Workspaces\Workspace_Mars\prefixedproperties\pp-spring\src\main\java\net\sf\prefixedproperties\spring\PrefixedPropertiesFactoryBean.java">
+<violation beginline="146" endline="147" begincolumn="43" endcolumn="41" rule="EmptyCatchBlock" ruleset="Basic Rules" package="net.sf.prefixedproperties.spring" class="PrefixedPropertiesFactoryBean" method="loadProperties" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
+Avoid empty catch blocks
+</violation>
+</file>
+<file name="C:\Workspaces\Workspace_Mars\prefixedproperties\pp-spring\src\main\java\net\sf\prefixedproperties\spring\PrefixedPropertiesPlaceholderConfigurer.java">
+<violation beginline="124" endline="127" begincolumn="41" endcolumn="41" rule="CollapsibleIfStatements" ruleset="Basic Rules" package="net.sf.prefixedproperties.spring" class="PrefixedPropertiesPlaceholderConfigurer" method="createProperties" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
+These nested if statements could be combined
+</violation>
+<violation beginline="200" endline="201" begincolumn="43" endcolumn="41" rule="EmptyCatchBlock" ruleset="Basic Rules" package="net.sf.prefixedproperties.spring" class="PrefixedPropertiesPlaceholderConfigurer" method="loadProperties" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
+Avoid empty catch blocks
+</violation>
+</file>
+<file name="C:\Workspaces\Workspace_Mars\prefixedproperties\pp-spring\src\main\java\net\sf\prefixedproperties\spring\PrefixedPropertyOverrideConfigurer.java">
+<violation beginline="103" endline="106" begincolumn="41" endcolumn="41" rule="CollapsibleIfStatements" ruleset="Basic Rules" package="net.sf.prefixedproperties.spring" class="PrefixedPropertyOverrideConfigurer" method="createProperties" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
+These nested if statements could be combined
+</violation>
+<violation beginline="177" endline="178" begincolumn="43" endcolumn="41" rule="EmptyCatchBlock" ruleset="Basic Rules" package="net.sf.prefixedproperties.spring" class="PrefixedPropertyOverrideConfigurer" method="loadProperties" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
+Avoid empty catch blocks
+</violation>
+</file>
+</pmd>

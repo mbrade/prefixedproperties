@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd-cpd>
+<duplication lines="88" tokens="432">
+<file line="180" path="C:\Workspaces\Workspace_Mars\prefixedproperties\pp-spring\src\main\java\net\sf\prefixedproperties\spring\PrefixedPropertiesPlaceholderConfigurer.java"/>
+<file line="149" path="C:\Workspaces\Workspace_Mars\prefixedproperties\pp-spring\src\main\java\net\sf\prefixedproperties\spring\PrefixedPropertyOverrideConfigurer.java"/>
+<codefragment>
+<![CDATA[
+	}
+
+	public boolean isMixDefaultAndLocalPrefixConfigurations() {
+		return mixDefaultAndLocalPrefixConfigurations;
+	}
+
+	/**
+	 * Load properties.
+	 * 
+	 * @param props
+	 *            the props
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	@Override
+	protected void loadProperties(final Properties props) throws IOException {
+		if (locations != null) {
+			for (int i = 0; i < locations.length; i++) {
+				final Resource location = locations[i];
+				if (logger.isInfoEnabled()) {
+					logger.info("Loading properties file from " + location);
+				}
+				File file = null;
+				InputStream is = null;
+				try {
+					try {
+						file = location.getFile();
+						is = new BufferedInputStream(new FileInputStream(file));
+					} catch (final IOException ie) {// ignore
+					} finally {
+						if (file == null) {
+							is = location.getInputStream();
+						}
+					}
+
+					if (location.getFilename().toLowerCase().endsWith(Constants.XML_FILE_EXTENSION)) {
+						persister.loadFromXml(props, is);
+					} else if (location.getFilename().toLowerCase().endsWith(Constants.JSON_FILE_EXTENSION)) {
+						if (fileEncoding != null) {
+							persister.loadFromJson(props, new InputStreamReader(is, Charset.forName(fileEncoding)));
+						} else {
+							persister.loadFromJson(props, is);
+						}
+					} else if (location.getFilename().toLowerCase().endsWith(Constants.YAML_FILE_EXTENSION)) {
+						if (fileEncoding != null) {
+							persister.loadFromYAML(props, new InputStreamReader(is, Charset.forName(fileEncoding)));
+						} else {
+							persister.loadFromYAML(props, is);
+						}
+					} else {
+						if (fileEncoding != null) {
+							persister.load(props, new InputStreamReader(is, Charset.forName(fileEncoding)));
+						} else {
+							persister.load(props, is);
+						}
+					}
+				} catch (final IOException ex) {
+					if (ignoreResourceNotFound) {
+						if (logger.isWarnEnabled()) {
+							logger.warn("Could not load properties from " + location + ": " + ex.getMessage());
+						}
+					} else {
+						throw ex;
+					}
+				} finally {
+					if (is != null) {
+						is.close();
+					}
+				}
+			}
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.springframework.core.io.support.PropertiesLoaderSupport#
+	 * mergeProperties()
+	 */
+	@Override
+	protected Properties mergeProperties() throws IOException {
+		final PrefixedProperties myProperties = createProperties();
+		if (localOverride) {
+			loadProperties(myProperties);
+		}
+
+		if (localProperties != null) {
+			for (int i = 0; i < localProperties.length; i++) {
+]]>
+</codefragment>
+</duplication>
+<duplication lines="48" tokens="335">
+<file line="122" path="C:\Workspaces\Workspace_Mars\prefixedproperties\pp-spring\src\main\java\net\sf\prefixedproperties\spring\PrefixedPropertiesFactoryBean.java"/>
+<file line="184" path="C:\Workspaces\Workspace_Mars\prefixedproperties\pp-spring\src\main\java\net\sf\prefixedproperties\spring\PrefixedPropertiesPlaceholderConfigurer.java"/>
+<codefragment>
+<![CDATA[
+	}
+
+	@Override
+	protected void loadProperties(final Properties props) throws IOException {
+		if (locations != null) {
+			for (int i = 0; i < locations.length; i++) {
+				final Resource location = locations[i];
+				if (logger.isInfoEnabled()) {
+					logger.info("Loading properties file from " + location);
+				}
+				File file = null;
+				InputStream is = null;
+				try {
+					try {
+						file = location.getFile();
+						is = new BufferedInputStream(new FileInputStream(file));
+					} catch (final IOException ie) {// ignore
+					} finally {
+						if (file == null) {
+							is = location.getInputStream();
+						}
+					}
+
+					if (location.getFilename().toLowerCase().endsWith(Constants.XML_FILE_EXTENSION)) {
+						persister.loadFromXml(props, is);
+					} else if (location.getFilename().toLowerCase().endsWith(Constants.JSON_FILE_EXTENSION)) {
+						if (fileEncoding != null) {
+							persister.loadFromJson(props, new InputStreamReader(is, Charset.forName(fileEncoding)));
+						} else {
+							persister.loadFromJson(props, is);
+						}
+					} else if (location.getFilename().toLowerCase().endsWith(Constants.YAML_FILE_EXTENSION)) {
+						if (fileEncoding != null) {
+							persister.loadFromYAML(props, new InputStreamReader(is, Charset.forName(fileEncoding)));
+						} else {
+							persister.loadFromYAML(props, is);
+						}
+					} else {
+						if (fileEncoding != null) {
+							persister.load(props, new InputStreamReader(is, Charset.forName(fileEncoding)));
+						} else {
+							persister.load(props, is);
+						}
+					}
+				} catch (final IOException ex) {
+					if (ignoreResourceNotFound) {
+						if (logger.isWarnEnabled()) {
+							logger.warn("Could not load properties from " + location + ": " + ex.getMessage());
+]]>
+</codefragment>
+</duplication>
+<duplication lines="49" tokens="153">
+<file line="177" path="C:\Workspaces\Workspace_Mars\prefixedproperties\pp-spring\src\main\java\net\sf\prefixedproperties\spring\PrefixedPropertiesFactoryBean.java"/>
+<file line="231" path="C:\Workspaces\Workspace_Mars\prefixedproperties\pp-spring\src\main\java\net\sf\prefixedproperties\spring\PrefixedPropertiesPlaceholderConfigurer.java"/>
+<codefragment>
+<![CDATA[
+							logger.warn("Could not load properties from " + location + ": " + ex.getMessage());
+						}
+					} else {
+						throw ex;
+					}
+				} finally {
+					if (is != null) {
+						is.close();
+					}
+				}
+			}
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.springframework.core.io.support.PropertiesLoaderSupport#
+	 * mergeProperties()
+	 */
+	@Override
+	protected Properties mergeProperties() throws IOException {
+
+		final PrefixedProperties myProperties = createProperties();
+
+		if (localOverride) {
+			// Load properties from file upfront, to let local properties
+			// override.
+			loadProperties(myProperties);
+		}
+		if (localProperties != null) {
+			for (int i = 0; i < localProperties.length; i++) {
+				final Properties props = localProperties[i];
+				if (props != null) {
+					for (final Enumeration<Object> en = props.keys(); en.hasMoreElements();) {
+						final Object key = en.nextElement();
+						myProperties.put(key, props.get(key));
+					}
+				}
+			}
+		}
+		if (!localOverride) {
+			// Load properties from file afterwards, to let those properties
+			// override.
+			loadProperties(myProperties);
+		}
+
+		return myProperties;
+	}
+]]>
+</codefragment>
+</duplication>
+<duplication lines="97" tokens="131">
+<file line="216" path="C:\Workspaces\Workspace_Mars\prefixedproperties\pp-spring\src\main\java\net\sf\prefixedproperties\spring\PrefixedPropertiesFactoryBean.java"/>
+<file line="238" path="C:\Workspaces\Workspace_Mars\prefixedproperties\pp-spring\src\main\java\net\sf\prefixedproperties\spring\PrefixedPropertyOverrideConfigurer.java"/>
+<codefragment>
+<![CDATA[
+			}
+		}
+
+		if (!localOverride) {
+			loadProperties(myProperties);
+		}
+
+		return myProperties;
+	}
+
+	/**
+	 * Sets the default prefix.
+	 * 
+	 * @param defaultPrefix
+	 *            the new default prefix
+	 */
+	public void setDefaultPrefix(final String defaultPrefix) {
+		this.defaultPrefix = defaultPrefix;
+	}
+
+	/**
+	 * Sets this method to specify a system property to be used as an
+	 * environment. The value of the property will be used for setting the
+	 * default prefix. {@link PrefixedProperties#setDefaultPrefix(String)}
+	 * 
+	 * @param defaultPrefixSystemPropertyKey
+	 *            the new ddefault prefix system property key
+	 */
+	public void setDefaultPrefixSystemPropertyKey(final String defaultPrefixSystemPropertyKey) {
+		this.defaultPrefixSystemPropertyKey = defaultPrefixSystemPropertyKey;
+	}
+
+	/**
+	 * Sets the environment factory.
+	 * 
+	 * @param environmentFactory
+	 *            the new environment factory
+	 */
+	public void setEnvironmentFactory(final EnvironmentFactory environmentFactory) {
+		this.environmentFactory = environmentFactory;
+	}
+
+	/**
+	 * Set the encoding to use for parsing properties files.
+	 * <p>
+	 * Default is none, using the <code>java.util.Properties</code> default
+	 * encoding.
+	 * <p>
+	 * Only applies to classic properties files, not to XML files.
+	 * 
+	 * @param encoding
+	 *            the new file encoding
+	 * @see org.springframework.util.PropertiesPersister#load
+	 */
+	@Override
+	public void setFileEncoding(final String encoding) {
+		fileEncoding = encoding;
+	}
+
+	/**
+	 * Set if failure to find the property resource should be ignored.
+	 * <p>
+	 * "true" is appropriate if the properties file is completely optional.
+	 * Default is "false".
+	 * 
+	 * @param ignoreResourceNotFound
+	 *            the new ignore resource not found
+	 */
+	@Override
+	public void setIgnoreResourceNotFound(final boolean ignoreResourceNotFound) {
+		this.ignoreResourceNotFound = ignoreResourceNotFound;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.springframework.core.io.support.PropertiesLoaderSupport#
+	 * setLocalOverride(boolean)
+	 */
+	@Override
+	public void setLocalOverride(final boolean localOverride) {
+		this.localOverride = localOverride;
+	}
+
+	/**
+	 * Set a location of a properties file to be loaded.
+	 * <p>
+	 * Can point to a classic properties file or to an XML file that follows JDK
+	 * 1.5's properties XML format.
+	 * 
+	 * @param location
+	 *            the new location
+	 */
+	@Override
+	public void setLocation(final Resource location) {
+		locations = new Resource[] { location };
+	}
+]]>
+</codefragment>
+</duplication>
+</pmd-cpd>

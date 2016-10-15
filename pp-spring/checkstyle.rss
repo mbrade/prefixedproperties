@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<rss version="0.91">
+  <channel>
+    <title>PrefixedProperties-Spring - Checkstyle report</title>
+    <link>http://mbrade.github.io/prefixedproperties/pp-spring</link>
+    <description>PrefixedProperties-Spring - Checkstyle report</description>
+    <language>en-us</language>
+    <copyright>&#169;2010 - 2016</copyright>
+    <item>
+      <title>File: 12,
+             Errors: 0,
+             Warnings: 144,
+             Infos: 39
+      </title>
+            <link>http://mbrade.github.io/prefixedproperties/pp-spring/checkstyle.html</link>
+      <description>
+        <p>Click <a href="http://mbrade.github.io/prefixedproperties/pp-spring/checkstyle.html">here</a> for the full Checkstyle report.</p>
+
+        <table summary="Files" boder="1">
+          <thead>
+            <tr>
+              <th>Files</th>
+              <th style="width:30px;"><abbr title="Info">I</abbr></th>
+              <th style="width:30px;"><abbr title="Warning">W</abbr></th>
+              <th style="width:30px;"><abbr title="Error">E</abbr></th>
+            </tr>
+          </thead>
+          <tbody>
+                          <tr>
+                <td>
+                  <a href="http://mbrade.github.io/prefixedproperties/pp-spring/checkstyle.html#net.sf.prefixedproperties.spring.environmentfactories.SpringEnvironmentAwareFactory.java">net/sf/prefixedproperties/spring/environmentfactories/SpringEnvironmentAwareFactory.java</a>
+                </td>
+                <td>
+                  3
+                </td>
+                <td>
+                  9
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://mbrade.github.io/prefixedproperties/pp-spring/checkstyle.html#net.sf.prefixedproperties.spring.environmentfactories.SystemEnvironmentFactory.java">net/sf/prefixedproperties/spring/environmentfactories/SystemEnvironmentFactory.java</a>
+                </td>
+                <td>
+                  2
+                </td>
+                <td>
+                  20
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://mbrade.github.io/prefixedproperties/pp-spring/checkstyle.html#net.sf.prefixedproperties.spring.PrefixedPropertyOverrideConfigurer.java">net/sf/prefixedproperties/spring/PrefixedPropertyOverrideConfigurer.java</a>
+                </td>
+                <td>
+                  7
+                </td>
+                <td>
+                  14
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://mbrade.github.io/prefixedproperties/pp-spring/checkstyle.html#net.sf.prefixedproperties.spring.PrefixedPropertiesPlaceholderConfigurer.java">net/sf/prefixedproperties/spring/PrefixedPropertiesPlaceholderConfigurer.java</a>
+                </td>
+                <td>
+                  14
+                </td>
+                <td>
+                  19
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://mbrade.github.io/prefixedproperties/pp-spring/checkstyle.html#net.sf.prefixedproperties.spring.environmentfactories.StaticEnvironmentFactory.java">net/sf/prefixedproperties/spring/environmentfactories/StaticEnvironmentFactory.java</a>
+                </td>
+                <td>
+                  1
+                </td>
+                <td>
+                  4
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://mbrade.github.io/prefixedproperties/pp-spring/checkstyle.html#net.sf.prefixedproperties.spring.Constants.java">net/sf/prefixedproperties/spring/Constants.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  3
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://mbrade.github.io/prefixedproperties/pp-spring/checkstyle.html#net.sf.prefixedproperties.spring.environmentfactories.PropertiesFileEnvironmentFactory.java">net/sf/prefixedproperties/spring/environmentfactories/PropertiesFileEnvironmentFactory.java</a>
+                </td>
+                <td>
+                  2
+                </td>
+                <td>
+                  25
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://mbrade.github.io/prefixedproperties/pp-spring/checkstyle.html#net.sf.prefixedproperties.spring.EnvironmentFactory.java">net/sf/prefixedproperties/spring/EnvironmentFactory.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://mbrade.github.io/prefixedproperties/pp-spring/checkstyle.html#net.sf.prefixedproperties.spring.PrefixedPropertiesFactoryBean.java">net/sf/prefixedproperties/spring/PrefixedPropertiesFactoryBean.java</a>
+                </td>
+                <td>
+                  8
+                </td>
+                <td>
+                  35
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://mbrade.github.io/prefixedproperties/pp-spring/checkstyle.html#net.sf.prefixedproperties.spring.environmentfactories.CombinedEnvironmentFactory.java">net/sf/prefixedproperties/spring/environmentfactories/CombinedEnvironmentFactory.java</a>
+                </td>
+                <td>
+                  1
+                </td>
+                <td>
+                  8
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://mbrade.github.io/prefixedproperties/pp-spring/checkstyle.html#net.sf.prefixedproperties.spring.environmentfactories.FallbackEnvironmentFactory.java">net/sf/prefixedproperties/spring/environmentfactories/FallbackEnvironmentFactory.java</a>
+                </td>
+                <td>
+                  1
+                </td>
+                <td>
+                  5
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://mbrade.github.io/prefixedproperties/pp-spring/checkstyle.html#net.sf.prefixedproperties.spring.PrefixedPropertiesPersister.java">net/sf/prefixedproperties/spring/PrefixedPropertiesPersister.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                      </tbody>
+        </table>
+        
+      </description>
+    </item>
+  </channel>
+</rss>
+

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd version="4.2.5" timestamp="2016-10-15T22:58:33.121">
+<file name="C:\Workspaces\Workspace_Mars\prefixedproperties\pp-core\src\main\java\net\sf\prefixedproperties\config\DefaultPrefixConfig.java">
+<violation beginline="431" endline="433" begincolumn="41" endcolumn="41" rule="CollapsibleIfStatements" ruleset="Basic Rules" package="net.sf.prefixedproperties.config" class="DefaultPrefixConfig" method="setDefaultPrefix" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
+These nested if statements could be combined
+</violation>
+<violation beginline="456" endline="458" begincolumn="41" endcolumn="41" rule="CollapsibleIfStatements" ruleset="Basic Rules" package="net.sf.prefixedproperties.config" class="DefaultPrefixConfig" method="setPrefix" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
+These nested if statements could be combined
+</violation>
+</file>
+</pmd>

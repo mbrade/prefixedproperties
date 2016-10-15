@@ -1,0 +1,26 @@
+-classpath
+'C:/Workspaces/Workspace_Mars/prefixedproperties/pp-spring/target/classes;C:/Entwicklung/maven3-repository/org/springframework/spring-beans/4.3.3.RELEASE/spring-beans-4.3.3.RELEASE.jar;C:/Entwicklung/maven3-repository/commons-logging/commons-logging/1.2/commons-logging-1.2.jar;C:/Entwicklung/maven3-repository/com/fasterxml/jackson/dataformat/jackson-dataformat-yaml/2.8.3/jackson-dataformat-yaml-2.8.3.jar;C:/Entwicklung/maven3-repository/org/springframework/spring-expression/4.3.3.RELEASE/spring-expression-4.3.3.RELEASE.jar;C:/Entwicklung/maven3-repository/net/sf/triemap/triemap/1.0.1/triemap-1.0.1.jar;C:/Workspaces/Workspace_Mars/prefixedproperties/pp-core/target/classes;C:/Entwicklung/maven3-repository/org/yaml/snakeyaml/1.15/snakeyaml-1.15.jar;C:/Entwicklung/maven3-repository/org/springframework/spring-aop/4.3.3.RELEASE/spring-aop-4.3.3.RELEASE.jar;C:/Entwicklung/maven3-repository/org/springframework/spring-context/4.3.3.RELEASE/spring-context-4.3.3.RELEASE.jar;C:/Entwicklung/maven3-repository/log4j/log4j/1.2.16/log4j-1.2.16.jar;C:/Entwicklung/maven3-repository/org/springframework/spring-core/4.3.3.RELEASE/spring-core-4.3.3.RELEASE.jar;C:/Entwicklung/maven3-repository/commons-lang/commons-lang/2.5/commons-lang-2.5.jar;C:/Entwicklung/maven3-repository/com/fasterxml/jackson/core/jackson-core/2.8.3/jackson-core-2.8.3.jar'
+-encoding
+'UTF-8'
+-protected
+-sourcepath
+'C:/Workspaces/Workspace_Mars/prefixedproperties/pp-spring/src/main/java'
+-author
+-bottom
+'Copyright &#169; 2010-2016. All Rights Reserved.'
+-charset
+'UTF-8'
+-d
+'C:/Workspaces/Workspace_Mars/prefixedproperties/pp-spring/target/site/apidocs'
+-docencoding
+'UTF-8'
+-doctitle
+'PrefixedProperties-Spring 3.1.1-SNAPSHOT API'
+-link
+'http://download.oracle.com/javase/6/docs/api'
+-linkoffline
+'http://mbrade.github.io/prefixedproperties/pp-core/apidocs' 'C:/Workspaces/Workspace_Mars/prefixedproperties/pp-core/target/site/apidocs'
+-use
+-version
+-windowtitle
+'PrefixedProperties-Spring 3.1.1-SNAPSHOT API'
