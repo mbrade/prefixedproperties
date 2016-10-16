@@ -97,7 +97,10 @@ Use Resourcebundles on a environmental or user specific level.
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-site-plugin</artifactId>
-				<version>3.1</version>
+				<version>3.3</version>
+				<configuration>
+					<skipDeploy>true</skipDeploy>
+				</configuration>
 				<executions>
 					<execution>
 						<id>default</id>
@@ -116,7 +119,7 @@ Use Resourcebundles on a environmental or user specific level.
 						</goals>
 						<configuration>
 							<stagingDirectory>${main.basedir}/target/staging</stagingDirectory>
-							<skipDeploy>false</skipDeploy>							
+							<skipDeploy>true</skipDeploy>							
 						</configuration>
 						<phase>site</phase>
 					</execution>
@@ -130,12 +133,13 @@ Use Resourcebundles on a environmental or user specific level.
 				<configuration>
 					<message>Building site for ${project.version}</message>
 					<server>github.com</server>
-					<merge>false</merge>
+					<merge>true</merge>
 					<outputDirectory>${main.basedir}/target/staging</outputDirectory>
-					<path>${project.version}</path>				
+					<path>${site.path}</path>				
 				</configuration>
 				<executions>
 					<execution>
+						<id>deploy2github</id>
 						<goals>
 							<goal>site</goal>
 						</goals>
@@ -350,12 +354,14 @@ Use Resourcebundles on a environmental or user specific level.
 						</reports>
 					</reportSet>
 				</reportSets>
-			</plugin>
-<!-- 
+			</plugin> 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-changes-plugin</artifactId>
-				<version>2.11</version>
+				<version>2.12</version>
+			    <configuration>
+          		<includeOpenIssues>false</includeOpenIssues>
+        			</configuration>
 				<reportSets>
 					<reportSet>
 						<reports>
@@ -363,7 +369,7 @@ Use Resourcebundles on a environmental or user specific level.
 						</reports>
 					</reportSet>
 				</reportSets>
-			</plugin>-->
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>

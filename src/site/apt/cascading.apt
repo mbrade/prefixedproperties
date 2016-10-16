@@ -50,9 +50,9 @@ Example:
   dev.product_db.password=Cryptic
   dev.account_db.password=Secure
   dev.rights_db.password=Obscure
-  test.product_db.password=TestCryptic
-  test.account_db.password=TestSecure
-  test.rights_db.password=TestObscure
+  test.product_db.password=MoreCryptic!
+  test.account_db.password=MoreSecure#
+  test.rights_db.password=MoreObscure+
 +-------------------------------------------------+
   
   <<usage with PrefixedProperties:>>
@@ -68,7 +68,7 @@ Example:
   properties.setConfiguredPrefix("dev.account_db");
   properties.get("password"); //will return Secure
   
-  //change the prefix again now we forgot the first environment
+  //change the prefix again now we don't change the first environment
   properties.setConfiguredPrefix("product_db");
   properties.get("password"); //will return Cryptic
   
@@ -83,7 +83,7 @@ Explanation
   While 'dev' is already known, PrefixedProperties will add 'account_db' as a second environment below 'dev' and besides 'rights_db'.
   
   And why does the last example work with just setting 'product_db'?
-  This is because PrefixedProperties always tries to set the most specific environment and in this case it is everything below 'dev'. 
+  This is because PrefixedProperties always tries to set the most specific environment and in this case it is under 'dev'. 
   It's more likely that a more specific environment should be changed than a more global one.\ 
   
   If you just want to switch from dev to test without setting any further environments we will get not the expected behavior if the wrong environment configuration is set.
@@ -101,14 +101,19 @@ Explanation
 +--------------------------------------------------------------------------------------------+
 
   This becomes unhandy if you have more and more prefixes. The solution is to use PrefixConfigs.
+  With PrefixConfigs you can define which environments exists on which level. Which means to just change from "dev" to "test" with using setConfiguredPrefix("test") will give you the expected result.
   
   
 Configuration of PrefixedProperties
 
-  Since PrefixedProperties is also a normal Properties-Class you can use xml or properties-Files for configuration. One advantage of PrefixedProperties that it is also possible to use JSON-Files for loading and storing the configuration.\
-  You can use the loadFromJSON and storeToJSON methods to load and save JSON files. JSON has the advantage that the configuration looks the same as it would be used within PrefixProperties. So the configuration is more intuitiv. (But it's also easier to make syntactical mistakes.)
+  Since PrefixedProperties is also a normal Properties-Class you can use xml or properties-Files for configuration. One advantage of PrefixedProperties that it is also possible to use JSON and YAML-Files for loading and storing the configuration.\
+  You can use the loadFromJSON and storeToJSON or loadFromYAML and storeToYAML methods to load and save JSON or YAML files. JSON and YAML have the advantage that the configuration looks the same as it would be used within PrefixProperties. So the configuration is more intuitive. (But it's also easier to make syntactical mistakes.)
 
-+-------------------------------------+  
+  It's up to you to use different properties files or just one. In our projects in came up that it is easier to use one file. The overview is better and you can not miss a configuration in a file.
+  Also one hint always write down all configurations for all environments so you don't run into failures later on because of missing one property in another environment. You will notice on deployment or during runtime. But thats not PrefixedProperties specific.
+
++------------------------------------------------------------+  
+JSON:
   {
 	  "liv" : {
 		  "connections" : 10,
@@ -121,7 +126,21 @@ Configuration of PrefixedProperties
 	  "accountingsrv" : {
 		  "connections" : 30
 	  }
-  }   
-+-------------------------------------+
+  }  
+  
+YAML:
+ liv:
+  connections: 10
+  deliverysrv:
+   database:
+   	connections: 20
+ accountingsrv:
+  connections: 30 
+ 
+Properties:
+ liv.connections = 10
+ liv.deliverysrv.database.connections = 20
+ accountingsrv.connections = 30
++------------------------------------------------------------+
 
    
